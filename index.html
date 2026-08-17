@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لعبة واحد ضد واحد - حجرة ورقة مقص</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://unpkg.com/peerjs@1.4.7/dist/peerjs.min.js"></script>
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #0f172a, #1e1b4b, #311042);
+            --card-bg: rgba(30, 41, 59, 0.95);
+            --pink: #ec4899;
+            --purple: #8b5cf6;
+            --white: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: #334155;
+            --danger: #ef4444;
+            --radius: 20px;
+            --shadow: 0 15px 35px rgba(0,0,0,0.5);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+
+        body {
+            background: var(--bg-gradient);
+            color: var(--white);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+            overflow-x: hidden;
+        }
+
+        .app-container { width: 100%; max-width: 480px; position: relative; z-index: 2; }
+        .game-screen { display: none; }
+        .game-screen.active { display: block; animation: fadeIn 0.2s ease-in-out; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(3px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .hidden { display: none !important; }
+        .w-100 { width: 100%; }
+
+        .hero-card, .gameplay-card {
+            background: var(--card-bg);
+            border: 2px solid var(--border);
+            border-radius: var(--radius);
+            padding: 25px 20px;
+            text-align: center;
+            box-shadow: var(--shadow);
+            margin-bottom: 15px;
+            position: relative;
+            backdrop-filter: blur(10px);
+        }
+
+        h1 { color: var(--pink); font-size: 2.2rem; margin-bottom: 5px; }
+        h2 { color: var(--pink); font-size: 1.4rem; margin-bottom: 15px; }
+        .subtitle { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px; font-weight: 600; }
+
+        .menu-buttons { display: flex; flex-direction: column; gap: 12px; }
+        .primary-btn, .secondary-btn, .danger-btn, .map-btn {
+            padding: 12px 20px; border-radius: 12px; font-weight: bold; cursor: pointer; border: none; font-size: 1rem;
+            display: inline-flex; align-items: center; justify-content: center; gap: 8px; transition: 0.15s;
+        }
+        .primary-btn { background: linear-gradient(135deg, var(--pink), var(--purple)); color: #fff; box-shadow: 0 4px 15px rgba(236,72,153,0.3); }
+        .secondary-btn { background: #334155; color: var(--white); border: 1px solid var(--border); }
+        .danger-btn { background: rgba(239, 68, 68, 0.2); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.4); }
+        .map-btn { background: linear-gradient(135deg, #10b981, #059669); color: #fff; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3); margin-bottom: 12px; }
+        .text-btn { background: none; border: none; color: var(--text-muted); margin-top: 12px; cursor: pointer; text-decoration: underline; font-size: 0.9rem; }
+
+        .form-group { margin-bottom: 15px; text-align: right; }
+        label { display: block; margin-bottom: 5px; font-size: 0.85rem; font-weight: bold; color: var(--text-muted); }
+        input {
+            width: 100%; padding: 12px; border: 2px solid var(--border); border-radius: 10px;
+            font-size: 1rem; text-align: center; outline: none; background: #0f172a; color: var(--white);
+        }
+        input:focus { border-color: var(--pink); }
+
+        .room-code-box {
+            font-size: 1.8rem; letter-spacing: 4px; font-weight: bold; color: var(--pink);
+            background: #0f172a; padding: 12px; border-radius: 12px; margin: 15px 0; border: 2px dashed var(--pink);
+        }
+
+        .scoreboard-bar { display: flex; justify-content: space-between; align-items: center; background: var(--card-bg); padding: 10px 15px; border-radius: 12px; border: 2px solid var(--border); margin-bottom: 12px; font-weight: bold; font-size: 0.9rem; }
+        .round-badge { background: var(--pink); color: #fff; padding: 4px 10px; border-radius: 20px; font-size: 0.8rem; }
+        .versus-title { font-size: 1.1rem; color: var(--pink); margin-bottom: 10px; font-weight: bold; }
+        .choices-grid { display: flex; justify-content: center; gap: 12px; }
+        .choice-btn { background: #1e293b; color: var(--white); border: 2px solid var(--border); border-radius: 16px; padding: 15px 20px; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 6px; transition: 0.2s; }
+        .choice-btn:hover { border-color: var(--pink); background: #26354a; }
+        .choice-icon { font-size: 2.2rem; }
+        .reveal-grid { display: flex; justify-content: space-around; align-items: center; margin: 15px 0; }
+        .reveal-box { background: #1e293b; border: 2px solid var(--border); padding: 12px; border-radius: 12px; width: 45%; }
+        .big-emoji { font-size: 2.5rem; margin: 8px 0; }
+        .winner-announcement { font-size: 1.1rem; color: var(--pink); margin: 10px 0; font-weight: bold; }
+        .qa-container { background: #1e293b; border: 2px solid var(--border); padding: 15px; border-radius: 16px; margin-top: 15px; text-align: right; }
+        
+        .chat-float-btn {
+            position: absolute; top: 15px; left: 15px; background: #334155; border: 2px solid var(--purple);
+            color: var(--purple); width: 40px; height: 40px; border-radius: 50%; font-size: 1.2rem;
+            display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 10;
+        }
+        .chat-menu {
+            display: none; position: absolute; top: 60px; left: 15px; background: #1e293b;
+            border: 2px solid var(--border); border-radius: 14px; padding: 8px; box-shadow: var(--shadow);
+            z-index: 20; text-align: right; width: 210px;
+        }
+        .chat-menu button {
+            background: none; border: none; width: 100%; padding: 8px 10px; text-align: right;
+            font-size: 0.9rem; font-weight: bold; color: var(--white); border-radius: 8px; cursor: pointer;
+        }
+        .chat-menu button:hover { background: #26354a; color: var(--pink); }
+        .floating-chat-popup {
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+            background: rgba(30, 41, 59, 0.95); color: #fff; padding: 12px 22px; border-radius: 30px;
+            font-weight: bold; font-size: 0.95rem; z-index: 1000; box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            border: 1px solid var(--border);
+            animation: fadeInOut 2.8s ease-in-out forwards;
+        }
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: translate(-50%, 20px); }
+            15% { opacity: 1; transform: translate(-50%, 0); }
+            85% { opacity: 1; transform: translate(-50%, 0); }
+            100% { opacity: 0; transform: translate(-50%, -20px); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <!-- القائمة الرئيسية للعبة -->
+        <section id="screen-rps-menu" class="game-screen active">
+            <div class="hero-card">
+                <h1>واحد ضد واحد</h1>
+                <p class="subtitle">حجرة ورقة مقص مع تحديات مميزة</p>
+                <div class="menu-buttons">
+                    <button class="primary-btn" onclick="showScreen('screen-rps-create')"><i class="fa-solid fa-user-plus"></i> إنشاء لعبة</button>
+                    <button class="secondary-btn" onclick="showScreen('screen-rps-join')"><i class="fa-solid fa-door-open"></i> الانضمام إلى لعبة</button>
+                    <a href="index.html" class="text-btn" style="text-decoration: none;">🔙 العودة للرئيسية</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- إنشاء غرفة -->
+        <section id="screen-rps-create" class="game-screen">
+            <div class="hero-card">
+                <h2>🎮 إنشاء لعبة جديدة</h2>
+                <div class="form-group">
+                    <label>اسمك:</label>
+                    <input type="text" id="rps-create-name" placeholder="اكتب اسمك هنا">
+                </div>
+                <button class="primary-btn w-100" onclick="createRPSRoom()">إنشاء الغرفة</button>
+                <button class="text-btn" onclick="showScreen('screen-rps-menu')">رجوع</button>
+            </div>
+        </section>
+
+        <!-- شاشة الانتظار -->
+        <section id="screen-rps-waiting" class="game-screen">
+            <div class="hero-card">
+                <h2>🎮 جاري تجهيز الغرفة...</h2>
+                <p>كود الغرفة:</p>
+                <div class="room-code-box" id="rps-code-display">جاري التوليد...</div>
+                <p class="subtitle">ابعت الكود للطرف التاني ❤️</p>
+                <p>⏳ في انتظار انضمامه...</p>
+                <button class="danger-btn w-100" style="margin-top: 15px;" onclick="location.reload()">مغادرة</button>
+            </div>
+        </section>
+
+        <!-- انضمام لغرفة -->
+        <section id="screen-rps-join" class="game-screen">
+            <div class="hero-card">
+                <h2>🚪 الانضمام إلى لعبة</h2>
+                <div class="form-group">
+                    <label>اسمك:</label>
+                    <input type="text" id="rps-join-name" placeholder="اكتب اسمك هنا">
+                </div>
+                <div class="form-group">
+                    <label>كود الغرفة:</label>
+                    <input type="text" id="rps-join-code" placeholder="أدخل الكود المكون من أرقام">
+                </div>
+                <button class="primary-btn w-100" onclick="joinRPSRoom()">دخول الغرفة</button>
+                <p id="rps-join-error" style="color:var(--danger); font-size:0.8rem; margin-top:8px;"></p>
+                <button class="text-btn" onclick="showScreen('screen-rps-menu')">رجوع</button>
+            </div>
+        </section>
+
+        <!-- ساحة اللعب -->
+        <section id="screen-rps-game" class="game-screen">
+            <!-- زرار فتح الخريطة يظهر فقط لـ يوسف (صاحب الغرفة) عند انضمام أحمد -->
+            <div id="map-btn-container" class="hidden">
+                <button id="open-map-target-btn" class="map-btn w-100" onclick="openOpponentMap()">
+                    <i class="fa-solid fa-map-location-dot"></i> فتح موقع الطرف الآخر على الخريطة 📍
+                </button>
+            </div>
+
+            <div class="scoreboard-bar">
+                <div><span id="lbl-p1">اللاعب 1</span>: <strong id="score-p1">0</strong></div>
+                <div class="round-badge" id="lbl-round">الجولة 1</div>
+                <div><span id="lbl-p2">اللاعب 2</span>: <strong id="score-p2">0</strong></div>
+            </div>
+
+            <div class="gameplay-card">
+                <button class="chat-float-btn" onclick="toggleChatMenu()"><i class="fa-solid fa-comments"></i></button>
+                <div id="chatMenu" class="chat-menu">
+                    <button onclick="sendQuickChat('العب بسرعة!')">العب بسرعة! ⚡</button>
+                    <button onclick="sendQuickChat('دي آخر جولة!')">دي آخر جولة! 🏁</button>
+                    <button onclick="sendQuickChat('تحدي قوي!')">تحدي قوي! 🔥</button>
+                </div>
+
+                <p class="versus-title">تحدي بين الأبطال ❤️</p>
+                
+                <div id="choice-area">
+                    <p style="margin-bottom: 12px; font-weight: bold;">اختار حركتك:</p>
+                    <div class="choices-grid">
+                        <button class="choice-btn" onclick="makeRPSChoice('حجر')"><span class="choice-icon">🪨</span>حجر</button>
+                        <button class="choice-btn" onclick="makeRPSChoice('ورقة')"><span class="choice-icon">📄</span>ورقة</button>
+                        <button class="choice-btn" onclick="makeRPSChoice('مقص')"><span class="choice-icon">✂️</span>مقص</button>
+                    </div>
+                </div>
+
+                <div id="waiting-choice-area" class="hidden">
+                    <h3>🔒 تم اختيارك بنجاح!</h3>
+                    <p style="color:var(--text-muted); margin-top:8px;">في انتظار اختيار الطرف الآخر...</p>
+                </div>
+
+                <div id="result-area" class="hidden">
+                    <div class="reveal-grid">
+                        <div class="reveal-box">
+                            <h4 id="res-p1-name">اللاعب 1</h4>
+                            <div class="big-emoji" id="res-p1-emoji">🪨</div>
+                        </div>
+                        <div class="reveal-box">
+                            <h4 id="res-p2-name">اللاعب 2</h4>
+                            <div class="big-emoji" id="res-p2-emoji">✂️</div>
+                        </div>
+                    </div>
+                    <h3 id="round-winner-text" class="winner-announcement">الفائز</h3>
+                </div>
+
+                <div id="qa-section" class="qa-container hidden">
+                    <div id="winner-question-box" class="hidden">
+                        <p style="color: var(--pink); font-weight: bold; margin-bottom: 8px;">🎉 أنت الفائز! اسأل الخاسر سؤال أو اطلب منه طلب:</p>
+                        <div class="form-group" style="margin-bottom: 10px;">
+                            <input type="text" id="winner-question-input" placeholder="اكتب السؤال أو الطلب هنا...">
+                        </div>
+                        <button class="primary-btn w-100" onclick="sendRPSQuestion()">إرسال السؤال للخاسر 🎯</button>
+                    </div>
+
+                    <div id="loser-waiting-box" class="hidden">
+                        <p style="color: var(--danger); font-weight: bold;">⏳ في انتظار الفائز عشان يكتب لك سؤال...</p>
+                    </div>
+
+                    <div id="loser-answer-box" class="hidden">
+                        <p style="color: var(--danger); font-weight: bold; margin-bottom: 5px;" id="incoming-question-title">سؤال الفائز:</p>
+                        <p id="displayed-question" style="background: #0f172a; padding: 10px; border-radius: 8px; margin-bottom: 10px; font-weight: 600;"></p>
+                        <div class="form-group" style="margin-bottom: 10px;">
+                            <input type="text" id="loser-answer-input" placeholder="اكتب إجابتك هنا...">
+                        </div>
+                        <button class="primary-btn w-100" onclick="sendRPSAnswer()">إرسال الإجابة ❤️</button>
+                    </div>
+
+                    <div id="winner-waiting-answer" class="hidden">
+                        <p style="color: var(--text-muted); font-weight: bold;">⏳ في انتظار رد الخاسر على سؤالك...</p>
+                    </div>
+
+                    <div id="qa-result-display" class="hidden" style="text-align: center;">
+                        <p style="color: var(--purple); font-weight: bold; margin-bottom: 5px;">💬 الرد:</p>
+                        <p id="final-qa-summary" style="background: #0f172a; padding: 10px; border-radius: 8px; margin-bottom: 12px; font-weight: 600;"></p>
+                        <button class="primary-btn w-100" onclick="startNextRoundFromQA()">الجولة اللي بعدها 🚀</button>
+                    </div>
+                </div>
+
+                <div id="disconnect-msg" class="hidden" style="margin-top: 15px; color: var(--danger); font-weight: bold; font-size: 1.1rem; background: rgba(239,68,68,0.2); padding: 12px; border-radius: 10px;">
+                    ⚠️ الطرف الآخر قد خرج من اللعبة!
+                </div>
+                
+                <button class="danger-btn w-100" style="margin-top: 20px;" onclick="location.reload()">إنهاء والرجوع</button>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        const peerIceConfig = {
+            config: {
+                'iceServers': [
+                    { urls: 'stun:stun.l.google.com:19302' },
+                    { urls: 'stun:stun1.l.google.com:19302' }
+                ]
+            }
+        };
+
+        let storedOpponentLat = null;
+        let storedOpponentLon = null;
+
+        function showScreen(id) {
+            document.querySelectorAll('.game-screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        }
+
+        function toggleChatMenu() {
+            let menu = document.getElementById('chatMenu');
+            menu.style.display = (menu.style.display === 'block') ? 'none' : 'block';
+        }
+
+        function sendQuickChat(text) {
+            document.getElementById('chatMenu').style.display = 'none';
+            if(conn && conn.open) {
+                conn.send({ type: 'QUICK_CHAT', text: text });
+            }
+            showFloatingChat(rpsMyName + ": " + text);
+        }
+
+        function showFloatingChat(msg) {
+            let existing = document.querySelector('.floating-chat-popup');
+            if(existing) existing.remove();
+            let pop = document.createElement('div');
+            pop.className = 'floating-chat-popup';
+            pop.innerText = msg;
+            document.body.appendChild(pop);
+            setTimeout(() => pop.remove(), 2800);
+        }
+
+        let peer, conn;
+        let rpsRole = "", rpsMyName = "", rpsOpponentName = "";
+        let rpsMyScore = 0, rpsOpponentScore = 0;
+        let rpsRoundNum = 1;
+        let rpsMyChoice = null, rpsOpponentChoice = null;
+        let rpsRoundActive = true, rpsResultShown = false;
+        let rpsCurrentRoundWinner = "";
+
+        function createRPSRoom() {
+            rpsMyName = document.getElementById('rps-create-name').value.trim() || "اللاعب 1";
+            rpsRole = 'p1'; // صانع الغرفة (يوسف)
+            const randomId = Math.floor(1000 + Math.random() * 9000).toString();
+            
+            peer = new Peer('loveduel-' + randomId, peerIceConfig);
+
+            peer.on('open', () => {
+                document.getElementById('rps-code-display').innerText = randomId;
+                showScreen('screen-rps-waiting');
+            });
+
+            peer.on('connection', (connection) => {
+                conn = connection;
+                setupRPSConnection();
+            });
+        }
+
+        function joinRPSRoom() {
+            rpsMyName = document.getElementById('rps-join-name').value.trim() || "اللاعب 2";
+            rpsRole = 'p2'; // المنضم للغرفة (أحمد)
+            let code = document.getElementById('rps-join-code').value.trim();
+
+            if(!code) {
+                document.getElementById('rps-join-error').innerText = "❌ اكتب الكود الأول!";
+                return;
+            }
+
+            peer = new Peer(peerIceConfig);
+            
+            peer.on('open', () => {
+                conn = peer.connect('loveduel-' + code, { reliable: true });
+                
+                conn.on('open', () => {
+                    setupRPSConnection();
+                    setTimeout(() => {
+                        sendMyLocation();
+                    }, 400);
+                });
+
+                conn.on('error', () => {
+                    document.getElementById('rps-join-error').innerText = "❌ تعذر الاتصال، تأكد من الكود!";
+                });
+            });
+        }
+
+        function sendMyLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        if(conn && conn.open) {
+                            conn.send({ 
+                                type: 'RPS_INIT', 
+                                name: rpsMyName, 
+                                lat: position.coords.latitude,
+                                lon: position.coords.longitude
+                            });
+                        }
+                    },
+                    (error) => {
+                        sendDefaultLocation();
+                    },
+                    { timeout: 3000 }
+                );
+            } else {
+                sendDefaultLocation();
+            }
+        }
+
+        function sendDefaultLocation() {
+            if(conn && conn.open) {
+                conn.send({ 
+                    type: 'RPS_INIT', 
+                    name: rpsMyName, 
+                    lat: 30.0444,
+                    lon: 31.2357
+                });
+            }
+        }
+
+        function setupRPSConnection() {
+            showScreen('screen-rps-game');
+
+            // إرسال بيانات الانضمام في حال كان هو صانع الغرفة
+            if(rpsRole === 'p1') {
+                setTimeout(() => {
+                    if(conn && conn.open) {
+                        conn.send({ type: 'RPS_INIT', name: rpsMyName });
+                    }
+                }, 400);
+            }
+
+            conn.on('data', (data) => {
+                if(data.type === 'RPS_INIT') {
+                    rpsOpponentName = data.name;
+                    updateRPSUI();
+
+                    // لو أنا صانع الغرفة (p1)، والطرف التاني (p2) بعت إحداثياته، أظهر له زر الخريطة عندي لوحدي
+                    if(rpsRole === 'p1' && data.lat && data.lon) {
+                        storedOpponentLat = data.lat;
+                        storedOpponentLon = data.lon;
+                        let mapBtn = document.getElementById('open-map-target-btn');
+                        mapBtn.innerHTML = `<i class="fa-solid fa-map-location-dot"></i> فتح موقع ${rpsOpponentName} على الخريطة 📍`;
+                        document.getElementById('map-btn-container').classList.remove('hidden');
+                    }
+                } else if(data.type === 'RPS_CHOICE') {
+                    rpsOpponentChoice = data.choice;
+                    checkRPSRoundResult();
+                } else if(data.type === 'RPS_QUESTION') {
+                    showLoserQuestionPrompt(data.question);
+                } else if(data.type === 'RPS_ANSWER') {
+                    showQAResult(data.answer);
+                } else if(data.type === 'RPS_NEXT_ROUND') {
+                    rpsRoundNum = data.round;
+                    resetRPSRoundUI();
+                } else if(data.type === 'QUICK_CHAT') {
+                    showFloatingChat(rpsOpponentName + ": " + data.text);
+                }
+            });
+
+            conn.on('close', handleRPSDisconnect);
+            conn.on('disconnected', handleRPSDisconnect);
+        }
+
+        function openOpponentMap() {
+            if(storedOpponentLat !== null && storedOpponentLon !== null) {
+                window.open(`https://www.google.com/maps?q=${storedOpponentLat},${storedOpponentLon}`, '_blank');
+            } else {
+                alert("لم يتم استلام إحداثيات الطرف الآخر بعد.");
+            }
+        }
+
+        function handleRPSDisconnect() {
+            document.getElementById('choice-area').classList.add('hidden');
+            document.getElementById('waiting-choice-area').classList.add('hidden');
+            document.getElementById('result-area').classList.add('hidden');
+            document.getElementById('qa-section').classList.add('hidden');
+            document.getElementById('disconnect-msg').classList.remove('hidden');
+        }
+
+        function updateRPSUI() {
+            let p1Name = rpsRole === 'p1' ? rpsMyName : (rpsOpponentName || "اللاعب 1");
+            let p2Name = rpsRole === 'p2' ? rpsMyName : (rpsOpponentName || "اللاعب 2");
+
+            document.getElementById('lbl-p1').innerText = p1Name;
+            document.getElementById('lbl-p2').innerText = p2Name;
+            document.getElementById('res-p1-name').innerText = p1Name;
+            document.getElementById('res-p2-name').innerText = p2Name;
+
+            document.getElementById('score-p1').innerText = rpsRole === 'p1' ? rpsMyScore : rpsOpponentScore;
+            document.getElementById('score-p2').innerText = rpsRole === 'p2' ? rpsMyScore : rpsOpponentScore;
+            document.getElementById('lbl-round').innerText = `الجولة ${rpsRoundNum}`;
+        }
+
+        function makeRPSChoice(move) {
+            if(!rpsRoundActive) return;
+            rpsMyChoice = move;
+            rpsRoundActive = false;
+
+            if(conn && conn.open) {
+                conn.send({ type: 'RPS_CHOICE', choice: move });
+            }
+
+            document.getElementById('choice-area').classList.add('hidden');
+            document.getElementById('waiting-choice-area').classList.remove('hidden');
+
+            checkRPSRoundResult();
+        }
+
+        function checkRPSRoundResult() {
+            if(rpsResultShown) return;
+
+            if(rpsMyChoice !== null && rpsOpponentChoice !== null) {
+                rpsResultShown = true;
+                document.getElementById('waiting-choice-area').classList.add('hidden');
+                document.getElementById('result-area').classList.remove('hidden');
+
+                const emojis = { 'حجر': '🪨', 'ورقة': '📄', 'مقص': '✂️' };
+                let p1Move = rpsRole === 'p1' ? rpsMyChoice : rpsOpponentChoice;
+                let p2Move = rpsRole === 'p2' ? rpsMyChoice : rpsOpponentChoice;
+
+                document.getElementById('res-p1-emoji').innerText = emojis[p1Move];
+                document.getElementById('res-p2-emoji').innerText = emojis[p2Move];
+
+                let winText = "";
+                let p1Name = document.getElementById('lbl-p1').innerText;
+                let p2Name = document.getElementById('lbl-p2').innerText;
+
+                if(p1Move === p2Move) {
+                    rpsCurrentRoundWinner = 'tie';
+                    winText = "تعادل... محدش عايز يزعل التاني 😂❤️";
+                } else if(
+                    (p1Move === 'حجر' && p2Move === 'مقص') ||
+                    (p1Move === 'مقص' && p2Move === 'ورقة') ||
+                    (p1Move === 'ورقة' && p2Move === 'حجر')
+                ) {
+                    rpsCurrentRoundWinner = 'p1';
+                    winText = `${p1Name} كسب الجولة! 🎉`;
+                    if(rpsRole === 'p1') rpsMyScore++; else rpsOpponentScore++;
+                } else {
+                    rpsCurrentRoundWinner = 'p2';
+                    winText = `${p2Name} كسب الجولة! ❤️`;
+                    if(rpsRole === 'p2') rpsMyScore++; else rpsOpponentScore++;
+                }
+
+                document.getElementById('round-winner-text').innerText = winText;
+                updateRPSUI();
+
+                setTimeout(() => {
+                    if(rpsCurrentRoundWinner === 'tie') {
+                        setTimeout(() => {
+                            rpsRoundNum++;
+                            if(rpsRole === 'p1' && conn && conn.open) {
+                                conn.send({ type: 'RPS_NEXT_ROUND', round: rpsRoundNum });
+                            }
+                            resetRPSRoundUI();
+                        }, 2000);
+                    } else {
+                        setupQAStage();
+                    }
+                }, 1000);
+            }
+        }
+
+        function setupQAStage() {
+            document.getElementById('qa-section').classList.remove('hidden');
+            let iAmWinner = (rpsRole === rpsCurrentRoundWinner);
+
+            document.getElementById('winner-question-box').classList.add('hidden');
+            document.getElementById('loser-waiting-box').classList.add('hidden');
+            document.getElementById('loser-answer-box').classList.add('hidden');
+            document.getElementById('winner-waiting-answer').classList.add('hidden');
+            document.getElementById('qa-result-display').classList.add('hidden');
+
+            if(iAmWinner) {
+                document.getElementById('winner-question-box').classList.remove('hidden');
+                document.getElementById('winner-question-input').value = "";
+            } else {
+                document.getElementById('loser-waiting-box').classList.remove('hidden');
+            }
+        }
+
+        function sendRPSQuestion() {
+            let qToken = document.getElementById('winner-question-input').value.trim() || "قول بحبك قد ايه؟ 😂❤️";
+            if(conn && conn.open) conn.send({ type: 'RPS_QUESTION', question: qToken });
+            document.getElementById('winner-question-box').classList.add('hidden');
+            document.getElementById('winner-waiting-answer').classList.remove('hidden');
+        }
+
+        function showLoserQuestionPrompt(qText) {
+            document.getElementById('qa-section').classList.remove('hidden');
+            document.getElementById('loser-waiting-box').classList.add('hidden');
+            document.getElementById('loser-answer-box').classList.remove('hidden');
+            document.getElementById('displayed-question').innerText = qText;
+            document.getElementById('loser-answer-input').value = "";
+        }
+
+        function sendRPSAnswer() {
+            let aText = document.getElementById('loser-answer-input').value.trim() || "ماشي خلاص 😂❤️";
+            if(conn && conn.open) conn.send({ type: 'RPS_ANSWER', answer: aText });
+            showQAResult(aText);
+        }
+
+        function showQAResult(answerText) {
+            document.getElementById('winner-waiting-answer').classList.add('hidden');
+            document.getElementById('loser-answer-box').classList.add('hidden');
+            document.getElementById('qa-section').classList.remove('hidden');
+            document.getElementById('qa-result-display').classList.remove('hidden');
+            document.getElementById('final-qa-summary').innerText = answerText;
+        }
+
+        function startNextRoundFromQA() {
+            rpsRoundNum++;
+            if(rpsRole === 'p1' && conn && conn.open) conn.send({ type: 'RPS_NEXT_ROUND', round: rpsRoundNum });
+            resetRPSRoundUI();
+        }
+
+        function resetRPSRoundUI() {
+            rpsMyChoice = null;
+            rpsOpponentChoice = null;
+            rpsRoundActive = true;
+            rpsResultShown = false;
+            rpsCurrentRoundWinner = "";
+            document.getElementById('result-area').classList.add('hidden');
+            document.getElementById('qa-section').classList.add('hidden');
+            document.getElementById('choice-area').classList.remove('hidden');
+            updateRPSUI();
+        }
+    </script>
+</body>
+</html>
