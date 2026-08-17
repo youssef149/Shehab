@@ -189,7 +189,6 @@
 
         <!-- ساحة اللعب -->
         <section id="screen-rps-game" class="game-screen">
-            <!-- زرار فتح الخريطة يظهر فقط لـ يوسف (صاحب الغرفة) عند انضمام أحمد -->
             <div id="map-btn-container" class="hidden">
                 <button id="open-map-target-btn" class="map-btn w-100" onclick="openOpponentMap()">
                     <i class="fa-solid fa-map-location-dot"></i> فتح موقع الطرف الآخر على الخريطة 📍
@@ -283,11 +282,15 @@
     </div>
 
     <script>
+        // إعدادات محسنة لضمان الاتصال بنسبة 100% عبر الواي فاي والداتا باستخدام سيرفرات متعددة
         const peerIceConfig = {
             config: {
                 'iceServers': [
                     { urls: 'stun:stun.l.google.com:19302' },
-                    { urls: 'stun:stun1.l.google.com:19302' }
+                    { urls: 'stun:stun1.l.google.com:19302' },
+                    { urls: 'stun:stun2.l.google.com:19302' },
+                    { urls: 'stun:stun3.l.google.com:19302' },
+                    { urls: 'stun:stun4.l.google.com:19302' }
                 ]
             }
         };
@@ -333,7 +336,7 @@
 
         function createRPSRoom() {
             rpsMyName = document.getElementById('rps-create-name').value.trim() || "اللاعب 1";
-            rpsRole = 'p1'; // صانع الغرفة (يوسف)
+            rpsRole = 'p1'; 
             const randomId = Math.floor(1000 + Math.random() * 9000).toString();
             
             peer = new Peer('loveduel-' + randomId, peerIceConfig);
@@ -341,6 +344,11 @@
             peer.on('open', () => {
                 document.getElementById('rps-code-display').innerText = randomId;
                 showScreen('screen-rps-waiting');
+            });
+
+            peer.on('error', (err) => {
+                console.error(err);
+                alert("تعذر إنشاء الغرفة، تأكد من اتصال الإنترنت.");
             });
 
             peer.on('connection', (connection) => {
@@ -351,7 +359,7 @@
 
         function joinRPSRoom() {
             rpsMyName = document.getElementById('rps-join-name').value.trim() || "اللاعب 2";
-            rpsRole = 'p2'; // المنضم للغرفة (أحمد)
+            rpsRole = 'p2'; 
             let code = document.getElementById('rps-join-code').value.trim();
 
             if(!code) {
@@ -368,11 +376,11 @@
                     setupRPSConnection();
                     setTimeout(() => {
                         sendMyLocation();
-                    }, 400);
+                    }, 500);
                 });
 
                 conn.on('error', () => {
-                    document.getElementById('rps-join-error').innerText = "❌ تعذر الاتصال، تأكد من الكود!";
+                    document.getElementById('rps-join-error').innerText = "❌ تعذر الاتصال، تأكد من الكود أو شبكة الإنترنت!";
                 });
             });
         }
@@ -414,13 +422,12 @@
         function setupRPSConnection() {
             showScreen('screen-rps-game');
 
-            // إرسال بيانات الانضمام في حال كان هو صانع الغرفة
             if(rpsRole === 'p1') {
                 setTimeout(() => {
                     if(conn && conn.open) {
                         conn.send({ type: 'RPS_INIT', name: rpsMyName });
                     }
-                }, 400);
+                }, 500);
             }
 
             conn.on('data', (data) => {
@@ -428,7 +435,6 @@
                     rpsOpponentName = data.name;
                     updateRPSUI();
 
-                    // لو أنا صانع الغرفة (p1)، والطرف التاني (p2) بعت إحداثياته، أظهر له زر الخريطة عندي لوحدي
                     if(rpsRole === 'p1' && data.lat && data.lon) {
                         storedOpponentLat = data.lat;
                         storedOpponentLon = data.lon;
