@@ -2,514 +2,323 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Football Draft</title>
+<title>⚖️ محكمة الصحاب</title>
 
 <style>
 *{
     box-sizing:border-box;
     margin:0;
     padding:0;
-    font-family:Arial,"Segoe UI",sans-serif;
-}
-
-:root{
-    --bg:#07111f;
-    --bg2:#0d1b2e;
-    --card:rgba(18,32,52,.94);
-    --card2:#13243a;
-    --border:rgba(255,255,255,.09);
-    --green:#19d47b;
-    --green2:#0eaa61;
-    --blue:#2388ff;
-    --gold:#ffc857;
-    --red:#ff4d67;
-    --white:#fff;
-    --muted:#9cafc6;
+    font-family:Tahoma,Arial,sans-serif;
 }
 
 body{
     min-height:100vh;
     background:
-        radial-gradient(circle at top,#12355b 0%,transparent 35%),
-        linear-gradient(145deg,var(--bg),#030912);
-    color:var(--white);
-    padding:15px;
+        radial-gradient(circle at top,#263653 0%,#111827 35%,#05070d 100%);
+    color:white;
+    overflow-x:hidden;
 }
 
-button,input{
-    font:inherit;
+button,input,textarea{
+    font-family:inherit;
 }
 
 button{
-    border:0;
     cursor:pointer;
+    border:0;
 }
 
-.app{
-    width:100%;
-    max-width:1100px;
-    margin:auto;
+.hidden{
+    display:none!important;
 }
 
-.screen{
-    display:none;
-}
+/* ================= HEADER ================= */
 
-.screen.active{
-    display:block;
-}
-
-.card{
-    background:var(--card);
-    border:1px solid var(--border);
-    border-radius:24px;
-    padding:25px;
-    box-shadow:0 20px 60px rgba(0,0,0,.3);
-    backdrop-filter:blur(15px);
+header{
+    padding:20px 15px;
+    text-align:center;
+    border-bottom:1px solid rgba(255,255,255,.1);
+    background:rgba(0,0,0,.2);
+    backdrop-filter:blur(12px);
 }
 
 .logo{
-    text-align:center;
-    margin-bottom:25px;
+    font-size:42px;
+    margin-bottom:5px;
 }
 
-.logo .ball{
-    font-size:55px;
+header h1{
+    font-size:28px;
 }
 
-.logo h1{
-    font-size:34px;
-    margin-top:8px;
-}
-
-.logo p{
-    color:var(--muted);
+header p{
+    color:#aeb8cc;
     margin-top:7px;
 }
 
-.menu{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:15px;
+/* ================= CONTAINER ================= */
+
+.container{
+    width:min(1050px,94%);
+    margin:25px auto;
 }
 
+/* ================= CARDS ================= */
+
+.card{
+    background:rgba(255,255,255,.07);
+    border:1px solid rgba(255,255,255,.1);
+    border-radius:22px;
+    padding:22px;
+    margin-bottom:20px;
+    box-shadow:0 15px 40px rgba(0,0,0,.25);
+    backdrop-filter:blur(15px);
+}
+
+.card h2{
+    margin-bottom:15px;
+}
+
+input,textarea{
+    width:100%;
+    background:rgba(0,0,0,.25);
+    border:1px solid rgba(255,255,255,.15);
+    color:white;
+    padding:14px;
+    border-radius:13px;
+    outline:none;
+    margin-bottom:12px;
+}
+
+textarea{
+    min-height:130px;
+    resize:vertical;
+}
+
+input:focus,textarea:focus{
+    border-color:#6ea8ff;
+}
+
+/* ================= BUTTONS ================= */
+
 .btn{
-    padding:14px 18px;
-    border-radius:14px;
+    padding:13px 20px;
+    border-radius:13px;
     color:white;
     font-weight:bold;
     transition:.2s;
+    margin:4px;
 }
 
 .btn:hover{
     transform:translateY(-2px);
 }
 
-.btn-green{
-    background:linear-gradient(135deg,var(--green),var(--green2));
+.primary{
+    background:linear-gradient(135deg,#3478ff,#6b4dff);
 }
 
-.btn-blue{
-    background:linear-gradient(135deg,#248cff,#1766ca);
+.green{
+    background:linear-gradient(135deg,#00a86b,#00d084);
 }
 
-.btn-red{
-    background:linear-gradient(135deg,#ff526c,#c92f48);
+.red{
+    background:linear-gradient(135deg,#d62939,#ff4b5c);
 }
 
-.btn-dark{
-    background:#1a2c43;
-}
-
-.input{
-    width:100%;
-    background:#0a1728;
-    color:white;
-    border:1px solid var(--border);
-    border-radius:13px;
-    padding:14px;
-    outline:none;
-    margin-top:8px;
-}
-
-.input:focus{
-    border-color:var(--green);
-}
-
-.form-group{
-    margin-bottom:17px;
-}
-
-.form-group label{
-    color:#cbd8e8;
-    font-weight:bold;
-}
-
-.room-code{
-    font-size:42px;
-    text-align:center;
-    letter-spacing:8px;
-    color:var(--gold);
-    font-weight:900;
-    background:#091729;
-    border:2px dashed rgba(255,200,87,.5);
-    padding:20px;
-    border-radius:18px;
-    margin:20px 0;
-    direction:ltr;
-}
-
-.waiting{
-    text-align:center;
-}
-
-.waiting-text{
-    color:var(--muted);
-    margin:15px 0;
-}
-
-.status{
-    padding:12px;
-    border-radius:12px;
-    background:rgba(25,212,123,.08);
-    color:var(--green);
-    text-align:center;
-    margin:15px 0;
-}
-
-.copy-row{
-    display:flex;
-    gap:10px;
-}
-
-.copy-row .room-code{
-    flex:1;
-    margin:0;
-}
-
-.copy-btn{
-    width:55px;
-    background:var(--gold);
+.yellow{
+    background:linear-gradient(135deg,#d89500,#ffbf26);
     color:#111;
-    border-radius:14px;
-    font-size:20px;
 }
 
-/* GAME */
+.gray{
+    background:#374151;
+}
 
-.game-top{
+/* ================= PLAYERS ================= */
+
+.players{
     display:grid;
-    grid-template-columns:1fr auto 1fr;
-    gap:12px;
-    margin-bottom:15px;
-}
-
-.money-card,
-.round-card{
-    background:var(--card);
-    border:1px solid var(--border);
-    border-radius:17px;
-    padding:14px;
-    text-align:center;
-}
-
-.money-card.me{
-    border-color:rgba(25,212,123,.35);
-}
-
-.money{
-    color:var(--gold);
-    font-size:20px;
-    font-weight:900;
-    margin-top:5px;
-}
-
-.round-card{
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-}
-
-.round-number{
-    color:var(--green);
-    font-size:20px;
-    font-weight:bold;
-}
-
-.main-grid{
-    display:grid;
-    grid-template-columns:1fr 1.3fr 1fr;
+    grid-template-columns:repeat(3,1fr);
     gap:15px;
 }
 
-.squad{
-    background:var(--card);
-    border:1px solid var(--border);
-    border-radius:20px;
-    padding:15px;
-}
-
-.squad h3{
+.player{
     text-align:center;
-    margin-bottom:12px;
+    padding:18px;
+    border-radius:18px;
+    background:rgba(255,255,255,.05);
+    border:1px solid rgba(255,255,255,.08);
 }
 
-.squad-name{
-    color:var(--green);
-}
-
-.player-list{
-    display:flex;
-    flex-direction:column;
-    gap:8px;
-}
-
-.squad-player{
+.avatar{
+    width:65px;
+    height:65px;
     display:flex;
     align-items:center;
-    gap:8px;
-    background:#0b192b;
-    border-radius:12px;
-    padding:9px;
-    min-height:53px;
-}
-
-.squad-player img{
-    width:38px;
-    height:38px;
+    justify-content:center;
+    margin:auto auto 10px;
     border-radius:50%;
-    object-fit:cover;
-    background:#17283e;
-}
-
-.squad-player .info{
-    min-width:0;
-}
-
-.squad-player strong{
-    display:block;
-    font-size:12px;
-}
-
-.squad-player small{
-    color:var(--muted);
-}
-
-.empty{
-    color:#60748d;
-    text-align:center;
-    border:1px dashed #30465f;
-    border-radius:12px;
-    padding:12px;
-    font-size:13px;
-}
-
-.auction{
-    background:var(--card);
-    border:1px solid rgba(255,200,87,.18);
-    border-radius:22px;
-    padding:20px;
-    text-align:center;
-}
-
-.position{
-    display:inline-block;
-    background:rgba(35,136,255,.15);
-    color:#62aaff;
-    padding:6px 12px;
-    border-radius:20px;
-    font-size:12px;
-    margin-bottom:10px;
-}
-
-.player-image{
-    width:130px;
-    height:130px;
-    border-radius:50%;
-    object-fit:cover;
-    border:4px solid rgba(255,255,255,.1);
-    background:#14263c;
+    background:linear-gradient(135deg,#315efb,#9b4dff);
+    font-size:28px;
 }
 
 .player-name{
-    font-size:25px;
-    margin:10px 0 5px;
-}
-
-.player-team{
-    color:var(--muted);
-}
-
-.rating{
-    display:inline-block;
-    color:#111;
-    background:var(--gold);
-    padding:5px 10px;
-    border-radius:9px;
     font-weight:bold;
-    margin-top:10px;
+    font-size:18px;
 }
 
-.price{
-    font-size:30px;
-    color:var(--green);
-    font-weight:900;
-    margin:15px 0;
-}
-
-.timer{
-    width:75px;
-    height:75px;
-    border-radius:50%;
-    border:5px solid var(--green);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    margin:10px auto;
-    font-size:25px;
-    font-weight:bold;
-}
-
-.bid-row{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:10px;
-    margin-top:12px;
-}
-
-.bid{
-    padding:13px;
-    border-radius:13px;
-    color:white;
-    font-weight:bold;
-    background:#172b43;
-}
-
-.bid.active{
-    background:linear-gradient(135deg,var(--green),var(--green2));
-}
-
-.bid:disabled{
-    opacity:.35;
-    cursor:not-allowed;
-}
-
-.free-player{
-    background:rgba(25,212,123,.08);
-    border:1px solid rgba(25,212,123,.2);
-    border-radius:15px;
-    padding:12px;
-    margin-top:12px;
-    color:var(--green);
-}
-
-.log{
-    background:#081526;
-    border-radius:13px;
-    padding:10px;
-    margin-top:15px;
-    min-height:70px;
-    max-height:120px;
-    overflow:auto;
-    text-align:right;
-}
-
-.log div{
-    color:#9db1c8;
-    font-size:12px;
-    padding:4px 0;
-}
-
-/* SIMULATION */
-
-.sim{
-    text-align:center;
+.role{
+    margin-top:7px;
+    color:#9db4d9;
+    font-size:14px;
 }
 
 .score{
+    margin-top:8px;
+    color:#ffd34d;
+}
+
+/* ================= COURT ================= */
+
+.court{
+    text-align:center;
+}
+
+.court-icon{
+    font-size:65px;
+}
+
+.case-number{
+    color:#9db4d9;
+    margin-bottom:5px;
+}
+
+.case-title{
+    font-size:25px;
+    font-weight:bold;
+    margin-bottom:20px;
+}
+
+.accusation{
+    background:rgba(214,41,57,.12);
+    border:1px solid rgba(255,75,92,.3);
+    padding:18px;
+    border-radius:17px;
+    margin-bottom:20px;
+    font-size:18px;
+}
+
+/* ================= TIMER ================= */
+
+.timer{
+    font-size:40px;
+    font-weight:bold;
+    color:#ffd34d;
+    margin:15px;
+}
+
+/* ================= VERDICT ================= */
+
+.verdict-box{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:15px;
+}
+
+.verdict{
+    padding:25px;
+    border-radius:20px;
+    font-size:22px;
+    font-weight:bold;
+    transition:.2s;
+}
+
+.verdict:hover{
+    transform:scale(1.03);
+}
+
+/* ================= LEADERBOARD ================= */
+
+.leader{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:15px;
+    background:rgba(255,255,255,.05);
+    border-radius:14px;
+    margin:8px 0;
+}
+
+.rank{
+    font-size:22px;
+}
+
+/* ================= STATUS ================= */
+
+.status{
+    position:fixed;
+    left:15px;
+    bottom:15px;
+    background:#111827;
+    border:1px solid rgba(255,255,255,.12);
+    padding:10px 15px;
+    border-radius:12px;
+    font-size:13px;
+    z-index:99;
+}
+
+.online{
+    color:#31e981;
+}
+
+.offline{
+    color:#ff5a67;
+}
+
+/* ================= MODAL ================= */
+
+.modal{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.75);
     display:flex;
     align-items:center;
     justify-content:center;
-    gap:25px;
-    margin:25px 0;
+    padding:20px;
+    z-index:100;
 }
 
-.team-score{
-    font-size:45px;
-    font-weight:900;
+.modal-box{
+    width:min(500px,100%);
+    background:#111827;
+    border:1px solid rgba(255,255,255,.15);
+    border-radius:25px;
+    padding:25px;
+    text-align:center;
 }
 
-.score-dash{
-    color:#60748d;
-}
+/* ================= RESPONSIVE ================= */
 
-.events{
-    text-align:right;
-    max-width:600px;
-    margin:20px auto;
-}
+@media(max-width:700px){
 
-.event{
-    background:#0b192b;
-    padding:12px;
-    border-radius:12px;
-    margin-bottom:8px;
-}
-
-.winner{
-    color:var(--green);
-    font-size:25px;
-    font-weight:bold;
-}
-
-.notice{
-    padding:12px;
-    background:rgba(255,200,87,.08);
-    color:var(--gold);
-    border-radius:12px;
-    margin-bottom:15px;
-}
-
-@media(max-width:800px){
-    .main-grid{
+    .players{
         grid-template-columns:1fr;
     }
 
-    .squad{
-        order:2;
-    }
-
-    .auction{
-        order:1;
-    }
-
-    .menu{
-        grid-template-columns:1fr;
-    }
-}
-
-@media(max-width:500px){
-    .game-top{
+    .verdict-box{
         grid-template-columns:1fr;
     }
 
-    .copy-row{
-        flex-direction:column;
+    header h1{
+        font-size:23px;
     }
 
-    .copy-btn{
-        width:100%;
-        height:45px;
-    }
-
-    .room-code{
-        font-size:30px;
-    }
-
-    .card{
-        padding:18px;
+    .case-title{
+        font-size:21px;
     }
 }
 </style>
@@ -517,1840 +326,510 @@ button{
 
 <body>
 
-<div class="app">
+<header>
+    <div class="logo">⚖️</div>
+    <h1>محكمة الصحاب</h1>
+    <p>يوسف × سيف × محمد</p>
+</header>
 
-<!-- ================= HOME ================= -->
+<div class="container">
 
-<section id="home" class="screen active">
+<!-- ================= LOBBY ================= -->
 
-<div class="card">
+<section id="lobby">
 
-<div class="logo">
-<div class="ball">⚽</div>
-<h1>Football Draft</h1>
-<p>كوّن فريقك وتحدى صاحبك</p>
-</div>
+    <div class="card">
+        <h2>👤 اختار اسمك</h2>
 
-<div class="menu">
+        <input
+            id="playerName"
+            placeholder="اكتب اسمك"
+            maxlength="20"
+        >
 
-<button class="btn btn-green" onclick="openCreate()">
-إنشاء غرفة
-</button>
+        <button class="btn primary" onclick="createCourt()">
+            🏛️ إنشاء محكمة
+        </button>
 
-<button class="btn btn-blue" onclick="openJoin()">
-دخول غرفة
-</button>
+        <button class="btn green" onclick="showJoin()">
+            🔑 دخول لمحكمة
+        </button>
+    </div>
 
-</div>
+    <div id="joinBox" class="card hidden">
 
-</div>
+        <h2>🔑 دخول لمحكمة</h2>
 
-</section>
+        <input
+            id="roomCode"
+            placeholder="اكتب كود المحكمة"
+            maxlength="8"
+        >
 
+        <button class="btn green" onclick="joinCourt()">
+            دخول
+        </button>
 
-<!-- ================= CREATE ================= -->
-
-<section id="create" class="screen">
-
-<div class="card">
-
-<h2>إنشاء غرفة جديدة</h2>
-
-<br>
-
-<div class="form-group">
-
-<label>اسمك</label>
-
-<input
-id="createName"
-class="input"
-maxlength="20"
-placeholder="اكتب اسمك">
-
-</div>
-
-<button
-class="btn btn-green"
-style="width:100%"
-onclick="createRoom()">
-
-إنشاء الغرفة
-
-</button>
-
-<br><br>
-
-<button
-class="btn btn-dark"
-style="width:100%"
-onclick="showScreen('home')">
-
-رجوع
-
-</button>
-
-</div>
+    </div>
 
 </section>
-
 
 <!-- ================= WAITING ================= -->
 
-<section id="waiting" class="screen">
+<section id="waiting" class="hidden">
 
-<div class="card waiting">
+    <div class="card court">
 
-<h2>الغرفة جاهزة 🎮</h2>
+        <div class="court-icon">🏛️</div>
 
-<p class="waiting-text">
-ابعت الكود لصاحبك وخليه يدخل
-</p>
+        <h2>المحكمة جاهزة</h2>
 
-<div class="copy-row">
+        <p style="margin:12px 0;color:#aeb8cc">
+            ابعت الكود لأصحابك
+        </p>
 
-<div
-id="roomCode"
-class="room-code">
+        <div
+            id="displayCode"
+            style="
+            font-size:35px;
+            font-weight:bold;
+            letter-spacing:8px;
+            color:#ffd34d;
+            margin:20px;
+            "
+        ></div>
 
-------
+        <div class="players" id="waitingPlayers"></div>
 
-</div>
+        <button
+            id="startButton"
+            class="btn primary hidden"
+            onclick="startGame()"
+        >
+            ⚖️ ابدأ المحكمة
+        </button>
 
-<button
-class="copy-btn"
-onclick="copyRoomCode()">
-
-📋
-
-</button>
-
-</div>
-
-<button
-class="btn btn-blue"
-style="width:100%"
-onclick="shareRoom()">
-
-📤 مشاركة الكود
-
-</button>
-
-<div class="status" id="waitingStatus">
-🟢 في انتظار اللاعب الثاني...
-</div>
-
-<button
-class="btn btn-red"
-style="width:100%"
-onclick="leaveRoom()">
-
-مغادرة الغرفة
-
-</button>
-
-</div>
+    </div>
 
 </section>
-
-
-<!-- ================= JOIN ================= -->
-
-<section id="join" class="screen">
-
-<div class="card">
-
-<h2>دخول غرفة</h2>
-
-<br>
-
-<div class="form-group">
-
-<label>اسمك</label>
-
-<input
-id="joinName"
-class="input"
-maxlength="20"
-placeholder="اكتب اسمك">
-
-</div>
-
-<div class="form-group">
-
-<label>كود الغرفة</label>
-
-<input
-id="joinCode"
-class="input"
-maxlength="6"
-inputmode="numeric"
-placeholder="مثال: 483921">
-
-</div>
-
-<div
-id="joinError"
-style="color:#ff6078;margin-bottom:12px">
-</div>
-
-<button
-class="btn btn-blue"
-style="width:100%"
-onclick="joinRoom()">
-
-دخول الغرفة
-
-</button>
-
-<br><br>
-
-<button
-class="btn btn-dark"
-style="width:100%"
-onclick="showScreen('home')">
-
-رجوع
-
-</button>
-
-</div>
-
-</section>
-
 
 <!-- ================= GAME ================= -->
 
-<section id="game" class="screen">
+<section id="game" class="hidden">
 
-<div class="game-top">
+    <div class="card">
 
-<div class="money-card me">
+        <div class="players" id="gamePlayers"></div>
 
-<div id="myNameLabel">
-أنت
-</div>
+    </div>
 
-<div
-id="myMoney"
-class="money">
+    <div class="card court">
 
-200M
+        <div class="court-icon">⚖️</div>
 
-</div>
+        <div class="case-number" id="caseNumber">
+            القضية رقم 1
+        </div>
 
-</div>
+        <div class="case-title" id="caseTitle">
+            جاري تحميل القضية...
+        </div>
 
-<div class="round-card">
+        <div class="accusation" id="accusation"></div>
 
-<span>الجولة</span>
+        <div class="timer" id="timer">
+            60
+        </div>
 
-<span
-id="roundLabel"
-class="round-number">
+        <div id="roleArea"></div>
 
-1 / 12
-
-</span>
-
-</div>
-
-<div class="money-card">
-
-<div id="opponentNameLabel">
-الخصم
-</div>
-
-<div
-id="opponentMoney"
-class="money">
-
-200M
-
-</div>
-
-</div>
-
-</div>
-
-
-<div class="main-grid">
-
-<!-- MY SQUAD -->
-
-<div class="squad">
-
-<h3 class="squad-name">
-فريقي
-</h3>
-
-<div id="mySquad" class="player-list"></div>
-
-</div>
-
-
-<!-- AUCTION -->
-
-<div class="auction">
-
-<div id="auctionPosition" class="position">
-حارس
-</div>
-
-<br>
-
-<img
-id="auctionImage"
-class="player-image"
-src=""
-alt="player">
-
-<h2
-id="auctionName"
-class="player-name">
-
----
-
-</h2>
-
-<div
-id="auctionTeam"
-class="player-team">
-
----
-
-</div>
-
-<div
-id="auctionRating"
-class="rating">
-
-80
-
-</div>
-
-<div
-id="auctionPrice"
-class="price">
-
-5M
-
-</div>
-
-<div
-id="timer"
-class="timer">
-
-15
-
-</div>
-
-<div id="auctionStatus" class="notice">
-جاري تجهيز اللاعب...
-</div>
-
-<div class="bid-row">
-
-<button
-id="bid5"
-class="bid"
-onclick="placeBid(5)">
-
-+5M
-
-</button>
-
-<button
-id="bid10"
-class="bid"
-onclick="placeBid(10)">
-
-+10M
-
-</button>
-
-<button
-id="bid20"
-class="bid"
-onclick="placeBid(20)">
-
-+20M
-
-</button>
-
-<button
-id="bid50"
-class="bid"
-onclick="placeBid(50)">
-
-+50M
-
-</button>
-
-</div>
-
-<div
-id="freeNotice"
-class="free-player"
-style="display:none">
-
-🎁 حصلت على لاعب مجاني
-
-</div>
-
-<div id="auctionLog" class="log"></div>
-
-</div>
-
-
-<!-- OPPONENT -->
-
-<div class="squad">
-
-<h3 style="color:#62aaff">
-فريق الخصم
-</h3>
-
-<div id="opponentSquad" class="player-list"></div>
-
-</div>
-
-</div>
-
-<br>
-
-<button
-class="btn btn-red"
-style="width:100%"
-onclick="leaveRoom()">
-
-الخروج من اللعبة
-
-</button>
+    </div>
 
 </section>
 
+<!-- ================= RESULTS ================= -->
 
-<!-- ================= SIMULATION ================= -->
+<section id="results" class="hidden">
 
-<section id="simulation" class="screen">
+    <div class="card court">
 
-<div class="card sim">
+        <div class="court-icon">🏆</div>
 
-<div class="logo">
+        <h2>نتيجة المحكمة</h2>
 
-<div class="ball">🏆</div>
+        <div id="leaderboard"></div>
 
-<h1>المحاكاة النهائية</h1>
+        <button class="btn primary" onclick="newCase()">
+            ⚖️ قضية جديدة
+        </button>
 
-<p>
-المباراة بدأت...
-</p>
-
-</div>
-
-<div class="score">
-
-<div>
-
-<div id="simTeam1" class="team-score">
-فريقي
-</div>
-
-</div>
-
-<div
-id="simScore"
-class="team-score">
-
-0 - 0
-
-</div>
-
-<div>
-
-<div id="simTeam2" class="team-score">
-الخصم
-</div>
-
-</div>
-
-</div>
-
-<div id="winnerText" class="winner">
-جاري تحديد الفائز...
-</div>
-
-<div id="events" class="events"></div>
-
-<button
-id="backHomeBtn"
-class="btn btn-green"
-style="width:100%;display:none"
-onclick="showScreen('home')">
-
-العودة للرئيسية
-
-</button>
-
-</div>
+    </div>
 
 </section>
 
 </div>
 
+<div class="status">
+    <span id="connectionDot" class="offline">●</span>
+    <span id="connectionText">جاري الاتصال...</span>
+</div>
+
+<div id="modal" class="modal hidden">
+
+    <div class="modal-box">
+
+        <h2 id="modalTitle">⚖️ الحكم</h2>
+
+        <p id="modalText" style="margin:15px 0;color:#c5cede"></p>
+
+        <button class="btn primary" onclick="closeModal()">
+            تمام
+        </button>
+
+    </div>
+
+</div>
+
+<!-- ================= FIREBASE ================= -->
 
 <script type="module">
 
-/* =========================================================
-   FIREBASE
-========================================================= */
-
-import {
-    initializeApp
-} from "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
 
 import {
     getDatabase,
     ref,
-    get,
     set,
+    get,
     update,
     onValue,
-    onDisconnect,
-    runTransaction
-} from "https://www.gstatic.com/firebasejs/12.17.1/firebase-database.js";
-
+    push,
+    remove,
+    onDisconnect
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
 const firebaseConfig = {
-
-    apiKey:
-    "AIzaSyDDBmmWXm7KQjo98Dfp2YzaR_RDmQlJ2-E",
-
-    authDomain:
-    "football-auction-d6d2c.firebaseapp.com",
-
-    databaseURL:
-    "https://football-auction-d6d2c-default-rtdb.firebaseio.com/",
-
-    projectId:
-    "football-auction-d6d2c",
-
-    storageBucket:
-    "football-auction-d6d2c.firebasestorage.app",
-
-    messagingSenderId:
-    "950968155203",
-
-    appId:
-    "1:950968155203:web:d7d1b32c32d088a9fe28f6",
-
-    measurementId:
-    "G-765EFNDJCT"
+    apiKey: "AIzaSyAhx23g8oBHK6rkFCOZy_ve8GqGcUfIYOg",
+    authDomain: "friends--court.firebaseapp.com",
+    projectId: "friends--court",
+    storageBucket: "friends--court.firebasestorage.app",
+    messagingSenderId: "286453720676",
+    appId: "1:286453720676:web:919cbe92892435a29ee171",
+    measurementId: "G-9359P5YR3V"
 };
 
+const app = initializeApp(firebaseConfig);
 
-const app =
-    initializeApp(firebaseConfig);
+const db = getDatabase(
+    app,
+    "https://friends--court-default-rtdb.firebaseio.com/"
+);
 
-const db =
-    getDatabase(app);
+
+/* ================= GAME DATA ================= */
+
+const CASES = [
+
+    {
+        title:"اختفاء غامض",
+        text:"المتهم اختفى من الشات لفترة طويلة بدون أي تفسير."
+    },
+
+    {
+        title:"جريمة التأخير",
+        text:"المتهم قال أنا جاي وهو لسه في البيت."
+    },
+
+    {
+        title:"سرقة الأكل",
+        text:"المتهم أكل آخر قطعة من غير ما يسأل أصحابه."
+    },
+
+    {
+        title:"الخيانة الكروية",
+        text:"المتهم شجع فريقًا منافسًا أمام أصحابه."
+    },
+
+    {
+        title:"الرسالة المتجاهلة",
+        text:"المتهم شاف الرسالة ولم يرد عليها."
+    },
+
+    {
+        title:"جريمة الاختفاء",
+        text:"المتهم اختفى وقت ما أصحابه كانوا محتاجينه."
+    },
+
+    {
+        title:"التهمة المجهولة",
+        text:"المتهم متهم بأنه أكثر شخص يعمل مشاكل في المجموعة."
+    },
+
+    {
+        title:"جريمة الضحك",
+        text:"المتهم ضحك على صاحبه في موقف كان المفروض يساعده فيه."
+    }
+
+];
 
 
-/* =========================================================
-   VARIABLES
-========================================================= */
+/* ================= STATE ================= */
 
-let roomCode = "";
-let myRole = "";
-let myName = "";
+let roomId = null;
+let myId = null;
+let myName = null;
+
+let roomRef = null;
 let roomData = null;
-let roomListener = null;
+
 let timerInterval = null;
 
-let localBid = 0;
 
-const START_MONEY = 200;
-
-const POSITIONS = [
-    "GK",
-    "DEF",
-    "DEF",
-    "DEF",
-    "DEF",
-    "MID",
-    "MID",
-    "MID",
-    "FWD",
-    "FWD",
-    "FWD"
-];
-
-
-/* =========================================================
-   PLAYER DATABASE
-   ملاحظة:
-   العملة داخل اللعبة افتراضية فقط.
-========================================================= */
-
-const PLAYERS = [
-
-/* ENGLAND */
-
-{
- id:"salah",
- name:"محمد صلاح",
- team:"Liverpool",
- league:"Premier League",
- pos:"FWD",
- rating:91,
- img:"https://images.unsplash.com/photo-1579952363873-27f3bade9f55?auto=format&fit=crop&w=400&q=80"
-},
-
-{
- id:"haaland",
- name:"Erling Haaland",
- team:"Manchester City",
- league:"Premier League",
- pos:"FWD",
- rating:91,
- img:"https://images.unsplash.com/photo-1579952363873-27f3bade9f55?auto=format&fit=crop&w=400&q=80"
-},
-
-{
- id:"saka",
- name:"Bukayo Saka",
- team:"Arsenal",
- league:"Premier League",
- pos:"FWD",
- rating:87,
- img:"https://images.unsplash.com/photo-1579952363873-27f3bade9f55?auto=format&fit=crop&w=400&q=80"
-},
-
-{
- id:"odegaard",
- name:"Martin Ødegaard",
- team:"Arsenal",
- league:"Premier League",
- pos:"MID",
- rating:89,
- img:"https://images.unsplash.com/photo-1579952363873-27f3bade9f55?auto=format&fit=crop&w=400&q=80"
-},
-
-{
- id:"rice",
- name:"Declan Rice",
- team:"Arsenal",
- league:"Premier League",
- pos:"MID",
- rating:87,
- img:"https://images.unsplash.com/photo-1579952363873-27f3bade9f55?auto=format&fit=crop&w=400&q=80"
-},
-
-{
- id:"palmer",
- name:"Cole Palmer",
- team:"Chelsea",
- league:"Premier League",
- pos:"MID",
- rating:88,
- img:"https://images.unsplash.com/photo-1579952363873-27f3bade9f55?auto=format&fit=crop&w=400&q=80"
-},
-
-{
- id:"van_dijk",
- name:"Virgil van Dijk",
- team:"Liverpool",
- league:"Premier League",
- pos:"DEF",
- rating:89,
- img:"https://images.unsplash.com/photo-1579952363873-27f3bade9f55?auto=format&fit=crop&w=400&q=80"
-},
-
-{
- id:"saliba",
- name:"William Saliba",
- team:"Arsenal",
- league:"Premier League",
- pos:"DEF",
- rating:87,
- img:"https://images.unsplash.com/photo-1579952363873-27f3bade9f55?auto=format&fit=crop&w=400&q=80"
-},
-
-{
- id:"dias",
- name:"Rúben Dias",
- team:"Manchester City",
- league:"Premier League",
- pos:"DEF",
- rating:88,
- img:"https://images.unsplash.com/photo-1579952363873-27f3bade9f55?auto=format&fit=crop&w=400&q=80"
-},
-
-{
- id:"alisson",
- name:"Alisson",
- team:"Liverpool",
- league:"Premier League",
- pos:"GK",
- rating:89,
- img:"https://images.unsplash.com/photo-1579952363873-27f3bade9f55?auto=format&fit=crop&w=400&q=80"
-},
-
-{
- id:"ederson",
- name:"Ederson",
- team:"Manchester City",
- league:"Premier League",
- pos:"GK",
- rating:88,
- img:"https://images.unsplash.com/photo-1579952363873-27f3bade9f55?auto=format&fit=crop&w=400&q=80"
-},
-
-/* SPAIN */
-
-{
- id:"lamine",
- name:"Lamine Yamal",
- team:"Barcelona",
- league:"La Liga",
- pos:"FWD",
- rating:89,
- img:"https://images.unsplash.com/photo-1579952363873-27f3bade9f55?auto=format&fit=crop&w=400&q=80"
-},
-
-{
- id:"mbappe",
- name:"Kylian Mbappé",
- team:"Real Madrid",
- league:"La Liga",
- pos:"FWD",
- rating:92,
- img:"https://images.unsplash.com/photo-1579952363873-27f3bade9f55?auto=format&fit=crop&w=400&q=80"
-},
-
-{
- id:"vinicius",
- name:"Vinícius Júnior",
- team:"Real Madrid",
- league:"La Liga",
- pos:"FWD",
- rating:91,
- img:"https://images.unsplash.com/photo-1579952363873-27f3bade9f55?auto=format&fit=crop&w=400&q=80"
-},
-
-{
- id:"pedri",
- name:"Pedri",
- team:"Barcelona",
- league:"La Liga",
- pos:"MID",
- rating:88,
- img:"https://images.unsplash.com/photo-1579952363873-27f3bade9f55?auto=format&fit=crop&w=400&q=80"
-},
-
-{
- id:"bellingham",
- name:"Jude Bellingham",
- team:"Real Madrid",
- league:"La Liga",
- pos:"MID",
- rating:90,
- img:"https://images.unsplash.com/photo-1579952363873-27f3bade9f55?auto=format&fit=crop&w=400&q=80"
-},
-
-{
- id:"valverde",
- name:"Federico Valverde",
- team:"Real Madrid",
- league:"La Liga",
- pos:"MID",
- rating:89,
- img:"https://images.unsplash.com/photo-1579952363873-27f3bade9f55?auto=format&fit=crop&w=400&q=80"
-},
-
-{
- id:"araujo",
- name:"Ronald Araújo",
- team:"Barcelona",
- league:"La Liga",
- pos:"DEF",
- rating:87,
- img:"https://images.unsplash.com/photo-1579952363873-27f3bade9f55?auto=format&fit=crop&w=400&q=80"
-},
-
-{
- id:"rudiger",
- name:"Antonio Rüdiger",
- team:"Real Madrid",
- league:"La Liga",
- pos:"DEF",
- rating:87,
- img:"https://images.unsplash.com/photo-1579952363873-27f3bade9f55?auto=format&fit=crop&w=400&q=80"
-},
-
-{
- id:"courtois",
- name:"Thibaut Courtois",
- team:"Real Madrid",
- league:"La Liga",
- pos:"GK",
- rating:90,
- img:"https://images.unsplash.com/photo-1579952363873-27f3bade9f55?auto=format&fit=crop&w=400&q=80"
-},
-
-/* EGYPT */
-
-{
- id:"trezeguet",
- name:"تريزيجيه",
- team:"Al Ahly",
- league:"Egypt",
- pos:"FWD",
- rating:82,
- img:"https://images.unsplash.com/photo-1579952363873-27f3bade9f55?auto=format&fit=crop&w=400&q=80"
-},
-
-{
- id:"imam",
- name:"إمام عاشور",
- team:"Al Ahly",
- league:"Egypt",
- pos:"MID",
- rating:83,
- img:"https://images.unsplash.com/photo-1579952363873-27f3bade9f55?auto=format&fit=crop&w=400&q=80"
-},
-
-{
- id:"zizo",
- name:"زيزو",
- team:"Al Ahly",
- league:"Egypt",
- pos:"FWD",
- rating:84,
- img:"https://images.unsplash.com/photo-1579952363873-27f3bade9f55?auto=format&fit=crop&w=400&q=80"
-},
-
-{
- id:"elneny",
- name:"محمد النني",
- team:"Egypt",
- league:"Egypt",
- pos:"MID",
- rating:78,
- img:"https://images.unsplash.com/photo-1579952363873-27f3bade9f55?auto=format&fit=crop&w=400&q=80"
-},
-
-{
- id:"ashraf",
- name:"أشرف داري",
- team:"Al Ahly",
- league:"Egypt",
- pos:"DEF",
- rating:78,
- img:"https://images.unsplash.com/photo-1579952363873-27f3bade9f55?auto=format&fit=crop&w=400&q=80"
-},
-
-{
- id:"elshenawy",
- name:"محمد الشناوي",
- team:"Al Ahly",
- league:"Egypt",
- pos:"GK",
- rating:82,
- img:"https://images.unsplash.com/photo-1579952363873-27f3bade9f55?auto=format&fit=crop&w=400&q=80"
-},
-
-{
- id:"zamalek_keeper",
- name:"حارس الزمالك",
- team:"Zamalek",
- league:"Egypt",
- pos:"GK",
- rating:77,
- img:"https://images.unsplash.com/photo-1579952363873-27f3bade9f55?auto=format&fit=crop&w=400&q=80"
-},
-
-{
- id:"omar_kamal",
- name:"عمر كمال",
- team:"Al Ahly",
- league:"Egypt",
- pos:"DEF",
- rating:77,
- img:"https://images.unsplash.com/photo-1579952363873-27f3bade9f55?auto=format&fit=crop&w=400&q=80"
-}
-
-];
-
-
-/* =========================================================
-   UTILITY
-========================================================= */
-
-window.showScreen =
-function(id){
-
-    document
-    .querySelectorAll(".screen")
-    .forEach(s =>
-        s.classList.remove("active")
-    );
-
-    document
-    .getElementById(id)
-    .classList.add("active");
-};
-
+/* ================= HELPERS ================= */
 
 function randomCode(){
 
-    return String(
-        Math.floor(
-            100000 +
-            Math.random()*900000
-        )
-    );
+    const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 
+    let code = "";
+
+    for(let i=0;i<6;i++){
+        code += chars[Math.floor(Math.random()*chars.length)];
+    }
+
+    return code;
+}
+
+function randomId(){
+
+    return Math.random().toString(36).substring(2)
+        + Date.now().toString(36);
+}
+
+function show(id){
+
+    document.getElementById("lobby").classList.add("hidden");
+    document.getElementById("waiting").classList.add("hidden");
+    document.getElementById("game").classList.add("hidden");
+    document.getElementById("results").classList.add("hidden");
+
+    document.getElementById(id).classList.remove("hidden");
+}
+
+function escapeHtml(text){
+
+    const div = document.createElement("div");
+
+    div.textContent = text;
+
+    return div.innerHTML;
 }
 
 
-function formatMoney(n){
+/* ================= CONNECTION ================= */
 
-    return Number(n || 0) + "M";
+const connectedRef = ref(db,".info/connected");
 
-}
+onValue(connectedRef,(snap)=>{
 
+    const dot =
+        document.getElementById("connectionDot");
 
-function randomFrom(arr){
+    const text =
+        document.getElementById("connectionText");
 
-    return arr[
-        Math.floor(
-            Math.random()*arr.length
-        )
-    ];
+    if(snap.val() === true){
 
-}
+        dot.className = "online";
+        text.textContent = "متصل";
 
+    }else{
 
-function shuffle(arr){
+        dot.className = "offline";
+        text.textContent = "غير متصل";
 
-    return [...arr].sort(
-        ()=>Math.random()-.5
-    );
+    }
 
-}
-
-
-function positionName(pos){
-
-    return {
-        GK:"حارس مرمى",
-        DEF:"مدافع",
-        MID:"وسط",
-        FWD:"مهاجم"
-    }[pos] || pos;
-
-}
+});
 
 
-/* =========================================================
-   CREATE
-========================================================= */
+/* ================= CREATE COURT ================= */
 
-window.openCreate =
-function(){
+window.createCourt = async function(){
 
-    showScreen("create");
+    myName =
+        document.getElementById("playerName")
+        .value.trim();
+
+    if(!myName){
+
+        alert("اكتب اسمك الأول");
+
+        return;
+    }
+
+    myId = randomId();
+
+    roomId = randomCode();
+
+    roomRef = ref(db,"rooms/"+roomId);
+
+    const player = {
+
+        id:myId,
+        name:myName,
+        score:0,
+        online:true
+
+    };
+
+    await set(roomRef,{
+
+        code:roomId,
+
+        host:myId,
+
+        status:"waiting",
+
+        round:0,
+
+        currentCase:null,
+
+        players:{
+            [myId]:player
+        }
+
+    });
+
+    onDisconnect(
+        ref(db,"rooms/"+roomId+"/players/"+myId+"/online")
+    ).set(false);
+
+    document.getElementById("displayCode")
+        .textContent = roomId;
+
+    show("waiting");
+
+    listenRoom();
 
 };
 
 
-window.createRoom =
-async function(){
+/* ================= JOIN ================= */
 
-    const name =
-        document
-        .getElementById("createName")
-        .value
-        .trim() ||
-        "اللاعب 1";
+window.showJoin = function(){
 
-    myName = name;
-    myRole = "p1";
+    document.getElementById("joinBox")
+        .classList.remove("hidden");
 
-    let code = "";
+};
 
-    for(let i=0;i<10;i++){
 
-        const candidate =
-            randomCode();
+window.joinCourt = async function(){
 
-        const snap =
-            await get(
-                ref(
-                    db,
-                    "rooms/"+candidate
-                )
-            );
+    myName =
+        document.getElementById("playerName")
+        .value.trim();
 
-        if(!snap.exists()){
+    const code =
+        document.getElementById("roomCode")
+        .value.trim()
+        .toUpperCase();
 
-            code = candidate;
-            break;
+    if(!myName){
 
-        }
+        alert("اكتب اسمك");
 
+        return;
     }
 
     if(!code){
 
-        alert("تعذر إنشاء الغرفة، حاول مرة أخرى.");
+        alert("اكتب كود المحكمة");
 
         return;
     }
 
-    roomCode = code;
-
-    const playerPool =
-        shuffle(PLAYERS);
-
-    const room = {
-
-        createdAt:Date.now(),
-
-        status:"waiting",
-
-        phase:"waiting",
-
-        round:0,
-
-        players:{
-
-            p1:{
-                name:myName,
-                online:true
-            }
-
-        },
-
-        money:{
-            p1:START_MONEY,
-            p2:START_MONEY
-        },
-
-        squads:{
-            p1:[],
-            p2:[]
-        },
-
-        auction:{
-
-            player:null,
-
-            price:5,
-
-            highestBidder:null,
-
-            active:false,
-
-            endsAt:0
-
-        },
-
-        usedPlayers:{},
-
-        playerPool:
-            playerPool.map(p=>p.id)
-
-    };
-
-    await set(
-        ref(
-            db,
-            "rooms/"+roomCode
-        ),
-        room
-    );
-
-    document
-    .getElementById("roomCode")
-    .innerText = roomCode;
-
-    showScreen("waiting");
-
-    listenRoom();
-
-    const onlineRef =
-        ref(
-            db,
-            "rooms/" +
-            roomCode +
-            "/players/p1/online"
-        );
-
-    onDisconnect(
-        onlineRef
-    ).set(false);
-
-};
-
-
-/* =========================================================
-   JOIN
-========================================================= */
-
-window.openJoin =
-function(){
-
-    showScreen("join");
-
-};
-
-
-window.joinRoom =
-async function(){
-
-    const name =
-        document
-        .getElementById("joinName")
-        .value
-        .trim() ||
-        "اللاعب 2";
-
-    const code =
-        document
-        .getElementById("joinCode")
-        .value
-        .trim();
-
-    const error =
-        document
-        .getElementById("joinError");
-
-    error.innerText = "";
-
-    if(!/^\d{6}$/.test(code)){
-
-        error.innerText =
-            "اكتب كود مكون من 6 أرقام.";
-
-        return;
-
-    }
-
-    const roomRef =
-        ref(
-            db,
-            "rooms/"+code
-        );
+    const target =
+        ref(db,"rooms/"+code);
 
     const snap =
-        await get(roomRef);
+        await get(target);
 
     if(!snap.exists()){
 
-        error.innerText =
-            "الغرفة غير موجودة.";
+        alert("المحكمة غير موجودة");
 
         return;
-
     }
 
-    const room =
-        snap.val();
+    const data = snap.val();
 
     if(
-        room.players &&
-        room.players.p2 &&
-        room.players.p2.online
+        data.players &&
+        Object.keys(data.players).length >= 3
     ){
 
-        error.innerText =
-            "الغرفة ممتلئة.";
+        alert("المحكمة مكتملة");
 
         return;
-
     }
 
-    const result =
-        await runTransaction(
-            ref(
-                db,
-                "rooms/"+code+"/players"
-            ),
-            players => {
+    myId = randomId();
 
-                players =
-                    players || {};
+    roomId = code;
 
-                if(
-                    players.p2 &&
-                    players.p2.online
-                ){
-
-                    return;
-
-                }
-
-                players.p2 = {
-
-                    name:name,
-
-                    online:true
-
-                };
-
-                return players;
-
-            }
-        );
-
-    if(!result.committed){
-
-        error.innerText =
-            "تعذر الدخول للغرفة.";
-
-        return;
-
-    }
-
-    roomCode = code;
-    myName = name;
-    myRole = "p2";
+    roomRef = target;
 
     await update(
-        roomRef,
+        ref(db,"rooms/"+roomId+"/players/"+myId),
         {
-            status:"playing",
-            phase:"auction"
+            id:myId,
+            name:myName,
+            score:0,
+            online:true
         }
     );
 
-    const onlineRef =
-        ref(
-            db,
-            "rooms/" +
-            roomCode +
-            "/players/p2/online"
-        );
-
     onDisconnect(
-        onlineRef
+        ref(db,"rooms/"+roomId+"/players/"+myId+"/online")
     ).set(false);
+
+    show("waiting");
+
+    document.getElementById("displayCode")
+        .textContent = roomId;
 
     listenRoom();
 
-    showScreen("game");
-
 };
 
 
-/* =========================================================
-   ROOM LISTENER
-========================================================= */
+/* ================= LISTEN ================= */
 
 function listenRoom(){
 
-    if(roomListener){
+    onValue(roomRef,(snap)=>{
 
-        roomListener();
+        if(!snap.exists()) return;
 
-    }
+        roomData = snap.val();
 
-    roomListener =
-        onValue(
-            ref(
-                db,
-                "rooms/"+roomCode
-            ),
-            snapshot => {
+        renderWaiting();
 
-                if(!snapshot.exists()){
+        if(roomData.status === "playing"){
 
-                    alert(
-                        "الغرفة انتهت."
-                    );
+            show("game");
 
-                    location.reload();
-
-                    return;
-
-                }
-
-                roomData =
-                    snapshot.val();
-
-                renderRoom();
-
-                processGame();
-
-            }
-        );
-
-}
-
-
-/* =========================================================
-   RENDER
-========================================================= */
-
-function renderRoom(){
-
-    if(!roomData)
-        return;
-
-    const p1 =
-        roomData.players?.p1?.name ||
-        "اللاعب 1";
-
-    const p2 =
-        roomData.players?.p2?.name ||
-        "في انتظار اللاعب";
-
-    document
-    .getElementById("myNameLabel")
-    .innerText =
-        myRole === "p1" ? p1 : p2;
-
-    document
-    .getElementById("opponentNameLabel")
-    .innerText =
-        myRole === "p1" ? p2 : p1;
-
-    document
-    .getElementById("myMoney")
-    .innerText =
-        formatMoney(
-            roomData.money?.[myRole]
-        );
-
-    document
-    .getElementById("opponentMoney")
-    .innerText =
-        formatMoney(
-            roomData.money?.[
-                myRole==="p1" ? "p2" : "p1"
-            ]
-        );
-
-    document
-    .getElementById("roundLabel")
-    .innerText =
-        `${roomData.round || 0} / 12`;
-
-    renderSquad(
-        "mySquad",
-        roomData.squads?.[myRole] || []
-    );
-
-    renderSquad(
-        "opponentSquad",
-        roomData.squads?.[
-            myRole==="p1" ? "p2" : "p1"
-        ] || []
-    );
-
-    renderAuction();
-
-}
-
-
-/* =========================================================
-   SQUAD
-========================================================= */
-
-function renderSquad(id,list){
-
-    const box =
-        document.getElementById(id);
-
-    box.innerHTML = "";
-
-    const sorted =
-        [...list].sort(
-            (a,b) =>
-            POSITIONS.indexOf(a.pos) -
-            POSITIONS.indexOf(b.pos)
-        );
-
-    for(let i=0;i<11;i++){
-
-        const player =
-            sorted[i];
-
-        if(!player){
-
-            const empty =
-                document.createElement("div");
-
-            empty.className =
-                "empty";
-
-            empty.innerText =
-                `${i+1}. مركز فارغ`;
-
-            box.appendChild(empty);
-
-            continue;
+            renderGame();
 
         }
 
-        const div =
-            document.createElement("div");
+        if(roomData.status === "results"){
 
-        div.className =
-            "squad-player";
+            show("results");
 
-        div.innerHTML = `
-
-            <img
-                src="${player.img}"
-                onerror="this.src='https://via.placeholder.com/100?text=⚽'"
-            >
-
-            <div class="info">
-
-                <strong>
-                    ${player.name}
-                </strong>
-
-                <small>
-                    ${positionName(player.pos)}
-                    • ${player.rating}
-                </small>
-
-            </div>
-
-        `;
-
-        box.appendChild(div);
-
-    }
-
-}
-
-
-/* =========================================================
-   GAME PROCESS
-========================================================= */
-
-let lastProcessedRound = -1;
-
-
-async function processGame(){
-
-    if(!roomData)
-        return;
-
-    if(
-        !roomData.players?.p2
-    ){
-
-        if(myRole==="p1"){
-
-            showScreen("waiting");
-
-            document
-            .getElementById("roomCode")
-            .innerText =
-                roomCode;
-
-        }
-
-        return;
-
-    }
-
-    if(
-        roomData.phase==="auction" &&
-        myRole==="p1"
-    ){
-
-        showScreen("game");
-
-        if(
-            !roomData.auction?.active
-        ){
-
-            await startAuction();
-
-        }
-
-    }
-
-    if(
-        roomData.phase==="free"
-    ){
-
-        showScreen("game");
-
-        if(myRole==="p1"){
-
-            await handleFreePlayer();
-
-        }
-
-    }
-
-    if(
-        roomData.phase==="simulation"
-    ){
-
-        showScreen("simulation");
-
-        runSimulationIfReady();
-
-    }
-
-}
-
-
-/* =========================================================
-   START AUCTION
-========================================================= */
-
-async function startAuction(){
-
-    if(myRole!=="p1")
-        return;
-
-    if(
-        (roomData.round || 0) >= 12
-    ){
-
-        await update(
-            ref(
-                db,
-                "rooms/"+roomCode
-            ),
-            {
-                phase:"simulation"
-            }
-        );
-
-        return;
-
-    }
-
-    const requiredPos =
-        POSITIONS[
-            roomData.round
-        ];
-
-    const used =
-        roomData.usedPlayers || {};
-
-    let available =
-        PLAYERS.filter(
-            p =>
-                p.pos===requiredPos &&
-                !used[p.id]
-        );
-
-    if(available.length===0){
-
-        available =
-            PLAYERS.filter(
-                p =>
-                    !used[p.id]
-            );
-
-    }
-
-    if(available.length===0){
-
-        await update(
-            ref(
-                db,
-                "rooms/"+roomCode
-            ),
-            {
-                phase:"simulation"
-            }
-        );
-
-        return;
-
-    }
-
-    const player =
-        randomFrom(available);
-
-    const base =
-        Math.max(
-            5,
-            Math.round(
-                (player.rating-65)/2
-            )*1
-        );
-
-    const ends =
-        Date.now()+15000;
-
-    await update(
-        ref(
-            db,
-            "rooms/"+roomCode
-        ),
-        {
-
-            phase:"auction",
-
-            auction:{
-
-                player:player,
-
-                price:base,
-
-                highestBidder:null,
-
-                active:true,
-
-                endsAt:ends
-
-            }
-
-        }
-    );
-
-}
-
-
-/* =========================================================
-   AUCTION TIMER
-========================================================= */
-
-function renderAuction(){
-
-    if(!roomData?.auction)
-        return;
-
-    const auction =
-        roomData.auction;
-
-    if(!auction.player){
-
-        return;
-
-    }
-
-    const p =
-        auction.player;
-
-    document
-    .getElementById("auctionPosition")
-    .innerText =
-        positionName(p.pos);
-
-    document
-    .getElementById("auctionName")
-    .innerText =
-        p.name;
-
-    document
-    .getElementById("auctionTeam")
-    .innerText =
-        `${p.team} • ${p.league}`;
-
-    document
-    .getElementById("auctionRating")
-    .innerText =
-        "Rating " + p.rating;
-
-    document
-    .getElementById("auctionImage")
-    .src =
-        p.img;
-
-    document
-    .getElementById("auctionPrice")
-    .innerText =
-        formatMoney(
-            auction.price
-        );
-
-    const status =
-        document
-        .getElementById("auctionStatus");
-
-    if(auction.highestBidder){
-
-        const name =
-            auction.highestBidder==="p1"
-                ? roomData.players.p1.name
-                : roomData.players.p2.name;
-
-        status.innerText =
-            `🔥 أعلى عرض: ${name}`;
-
-    }else{
-
-        status.innerText =
-            "ابدأ المزايدة";
-
-    }
-
-    clearInterval(timerInterval);
-
-    function tick(){
-
-        const seconds =
-            Math.max(
-                0,
-                Math.ceil(
-                    (
-                        auction.endsAt -
-                        Date.now()
-                    )/1000
-                )
-            );
-
-        document
-        .getElementById("timer")
-        .innerText =
-            seconds;
-
-        if(seconds<=0){
-
-            clearInterval(timerInterval);
-
-            finishAuction();
-
-        }
-
-    }
-
-    tick();
-
-    timerInterval =
-        setInterval(
-            tick,
-            300
-        );
-
-    updateBidButtons();
-
-}
-
-
-/* =========================================================
-   BID
-========================================================= */
-
-window.placeBid =
-async function(increase){
-
-    if(!roomData)
-        return;
-
-    const auction =
-        roomData.auction;
-
-    if(
-        !auction?.active
-    )
-        return;
-
-    const current =
-        Number(
-            auction.price || 0
-        );
-
-    const newPrice =
-        current + increase;
-
-    const money =
-        Number(
-            roomData.money?.[myRole] || 0
-        );
-
-    if(
-        newPrice > money
-    ){
-
-        addLog(
-            "رصيدك لا يكفي لهذا العرض."
-        );
-
-        return;
-
-    }
-
-    const auctionRef =
-        ref(
-            db,
-            "rooms/"+roomCode+"/auction"
-        );
-
-    await runTransaction(
-        auctionRef,
-        currentAuction => {
-
-            if(
-                !currentAuction ||
-                !currentAuction.active
-            )
-                return;
-
-            const currentPrice =
-                Number(
-                    currentAuction.price || 0
-                );
-
-            const currentMoney =
-                Number(
-                    roomData.money?.[myRole] || 0
-                );
-
-            const next =
-                currentPrice + increase;
-
-            if(next > currentMoney)
-                return;
-
-            currentAuction.price =
-                next;
-
-            currentAuction.highestBidder =
-                myRole;
-
-            return currentAuction;
-
-        }
-    );
-
-    addLog(
-        `${myName} رفع العرض إلى ${newPrice}M`
-    );
-
-};
-
-
-function updateBidButtons(){
-
-    const price =
-        Number(
-            roomData?.auction?.price || 0
-        );
-
-    const money =
-        Number(
-            roomData?.money?.[myRole] || 0
-        );
-
-    [5,10,20,50].forEach(v=>{
-
-        const btn =
-            document
-            .getElementById(
-                "bid"+v
-            );
-
-        if(btn){
-
-            btn.disabled =
-                price+v > money;
+            renderResults();
 
         }
 
@@ -2359,651 +838,649 @@ function updateBidButtons(){
 }
 
 
-/* =========================================================
-   FINISH AUCTION
-========================================================= */
+/* ================= WAITING ================= */
 
-async function finishAuction(){
+function renderWaiting(){
 
-    if(!roomData?.auction?.active)
+    if(!roomData || !roomData.players)
         return;
 
-    const auctionRef =
-        ref(
-            db,
-            "rooms/"+roomCode+"/auction"
-        );
-
-    const result =
-        await runTransaction(
-            auctionRef,
-            a => {
-
-                if(
-                    !a ||
-                    !a.active
-                )
-                    return;
-
-                a.active = false;
-
-                return a;
-
-            }
-        );
-
-    if(
-        !result.committed
-    )
-        return;
-
-    const auction =
-        result.snapshot.val();
-
-    const winner =
-        auction.highestBidder;
-
-    const player =
-        auction.player;
-
-    if(!winner){
-
-        await update(
-            ref(
-                db,
-                "rooms/"+roomCode
-            ),
-            {
-
-                phase:"free",
-
-                freePlayer:player,
-
-                auction:null
-
-            }
-        );
-
-        return;
-
-    }
-
-    const loser =
-        winner==="p1"
-            ? "p2"
-            : "p1";
-
-    const price =
-        Number(
-            auction.price
-        );
-
-    const updates = {};
-
-    updates[
-        `money/${winner}`
-    ] =
-        Number(
-            roomData.money[winner]
-        ) - price;
-
-    updates[
-        `squads/${winner}/${roomData.squads?.[winner]?.length || 0}`
-    ] =
-        player;
-
-    updates[
-        `usedPlayers/${player.id}`
-    ] =
-        true;
-
-    updates[
-        `phase`
-    ] =
-        "free";
-
-    updates[
-        `freePlayer`
-    ] =
-        null;
-
-    updates[
-        `freeFor`
-    ] =
-        loser;
-
-    updates[
-        `freeRound`
-    ] =
-        roomData.round;
-
-    updates[
-        `auction`
-    ] =
-        null;
-
-    await update(
-        ref(
-            db,
-            "rooms/"+roomCode
-        ),
-        updates
-    );
-
-}
-
-
-/* =========================================================
-   FREE PLAYER
-   الخاسر يأخذ لاعباً مجانياً
-========================================================= */
-
-async function handleFreePlayer(){
-
-    if(myRole!=="p1")
-        return;
-
-    if(
-        !roomData.freeFor
-    )
-        return;
-
-    const freeFor =
-        roomData.freeFor;
-
-    const requiredPos =
-        POSITIONS[
-            roomData.round
-        ];
-
-    const used =
-        roomData.usedPlayers || {};
-
-    let candidates =
-        PLAYERS.filter(
-            p =>
-                p.pos===requiredPos &&
-                !used[p.id]
-        );
-
-    if(candidates.length===0){
-
-        candidates =
-            PLAYERS.filter(
-                p=>!used[p.id]
-            );
-
-    }
-
-    if(!candidates.length){
-
-        await update(
-            ref(
-                db,
-                "rooms/"+roomCode
-            ),
-            {
-                phase:"simulation"
-            }
-        );
-
-        return;
-
-    }
-
-    const freePlayer =
-        randomFrom(candidates);
-
-    const index =
-        roomData.squads?.[
-            freeFor
-        ]?.length || 0;
-
-    const updates = {};
-
-    updates[
-        `squads/${freeFor}/${index}`
-    ] =
-        freePlayer;
-
-    updates[
-        `usedPlayers/${freePlayer.id}`
-    ] =
-        true;
-
-    updates[
-        "freePlayer"
-    ] =
-        freePlayer;
-
-    updates[
-        "freeFor"
-    ] =
-        null;
-
-    updates[
-        "round"
-    ] =
-        Number(roomData.round)+1;
-
-    updates[
-        "phase"
-    ] =
-        "auction";
-
-    updates[
-        "auction"
-    ] =
-        null;
-
-    await update(
-        ref(
-            db,
-            "rooms/"+roomCode
-        ),
-        updates
-    );
-
-}
-
-
-/* =========================================================
-   LOG
-========================================================= */
-
-function addLog(text){
+    const players =
+        Object.values(roomData.players);
 
     const box =
-        document
-        .getElementById("auctionLog");
+        document.getElementById("waitingPlayers");
 
-    if(!box)
-        return;
+    box.innerHTML = "";
 
-    const div =
-        document.createElement("div");
+    players.forEach((p,index)=>{
 
-    div.innerText =
-        text;
+        box.innerHTML += `
 
-    box.prepend(div);
+        <div class="player">
 
-}
+            <div class="avatar">
+                ${index===0?"👑":"👤"}
+            </div>
 
+            <div class="player-name">
+                ${escapeHtml(p.name)}
+            </div>
 
-/* =========================================================
-   COPY
-========================================================= */
+            <div class="role">
+                ${index===0?"صاحب المحكمة":"لاعب"}
+            </div>
 
-window.copyRoomCode =
-async function(){
+        </div>
 
-    if(!roomCode)
-        return;
+        `;
 
-    try{
+    });
 
-        await navigator.clipboard.writeText(
-            roomCode
-        );
-
-        alert(
-            "تم نسخ كود الغرفة ✅"
-        );
-
-    }catch(e){
-
-        prompt(
-            "انسخ الكود:",
-            roomCode
-        );
-
-    }
-
-};
-
-
-/* =========================================================
-   SHARE
-========================================================= */
-
-window.shareRoom =
-async function(){
-
-    const text =
-        `ادخل معايا Football Draft ⚽\nكود الغرفة: ${roomCode}`;
+    const start =
+        document.getElementById("startButton");
 
     if(
-        navigator.share
+        roomData.host === myId &&
+        players.length === 3
     ){
 
-        try{
-
-            await navigator.share({
-                title:"Football Draft",
-                text:text
-            });
-
-        }catch(e){}
+        start.classList.remove("hidden");
 
     }else{
 
-        await copyRoomCode();
+        start.classList.add("hidden");
 
     }
 
-};
+}
 
 
-/* =========================================================
-   LEAVE
-========================================================= */
+/* ================= START ================= */
 
-window.leaveRoom =
-async function(){
+window.startGame = async function(){
 
-    if(roomCode && myRole){
-
-        try{
-
-            await update(
-                ref(
-                    db,
-                    `rooms/${roomCode}/players/${myRole}`
-                ),
-                {
-                    online:false
-                }
-            );
-
-        }catch(e){}
-
-    }
-
-    location.reload();
-
-};
-
-
-/* =========================================================
-   SIMULATION
-========================================================= */
-
-let simulationStarted = false;
-
-
-function runSimulationIfReady(){
-
-    if(simulationStarted)
+    if(!roomData || roomData.host !== myId)
         return;
 
-    simulationStarted = true;
+    const players =
+        Object.values(roomData.players);
 
-    setTimeout(
-        simulateMatch,
-        800
-    );
+    if(players.length !== 3){
 
-}
+        alert("لازم يكون فيه 3 لاعبين");
+
+        return;
+    }
+
+    await update(roomRef,{
+
+        status:"playing",
+
+        round:1,
+
+        currentCase:Math.floor(
+            Math.random()*CASES.length
+        ),
+
+        caseStart:Date.now(),
+
+        judgeIndex:0
+
+    });
+
+};
 
 
-function teamStrength(list){
+/* ================= ROLES ================= */
 
-    if(!list.length)
-        return 0;
-
-    const total =
-        list.reduce(
-            (sum,p)=>
-            sum + Number(p.rating || 70),
-            0
-        );
-
-    return total/list.length;
-
-}
-
-
-function simulateMatch(){
-
-    const myTeam =
-        roomData.squads?.[myRole] || [];
-
-    const opponentRole =
-        myRole==="p1" ? "p2" : "p1";
-
-    const opponentTeam =
-        roomData.squads?.[
-            opponentRole
-        ] || [];
-
-    const myStrength =
-        teamStrength(myTeam);
-
-    const oppStrength =
-        teamStrength(opponentTeam);
-
-    const myGoals =
-        Math.max(
-            0,
-            Math.min(
-                6,
-                Math.round(
-                    1.3 +
-                    (myStrength-75)/10 +
-                    (Math.random()*2-1)
-                )
-            )
-        );
-
-    const oppGoals =
-        Math.max(
-            0,
-            Math.min(
-                6,
-                Math.round(
-                    1.3 +
-                    (oppStrength-75)/10 +
-                    (Math.random()*2-1)
-                )
-            )
-        );
-
-    document
-    .getElementById("simTeam1")
-    .innerText =
-        roomData.players?.[myRole]?.name ||
-        "فريقك";
-
-    document
-    .getElementById("simTeam2")
-    .innerText =
-        roomData.players?.[opponentRole]?.name ||
-        "الخصم";
-
-    document
-    .getElementById("simScore")
-    .innerText =
-        "0 - 0";
-
-    const events =
-        document
-        .getElementById("events");
-
-    events.innerHTML = "";
+function getRoles(){
 
     const players =
-        shuffle([
-            ...myTeam.map(
-                p=>({
-                    ...p,
-                    side:"me"
-                })
-            ),
-            ...opponentTeam.map(
-                p=>({
-                    ...p,
-                    side:"opp"
-                })
-            )
-        ]);
+        Object.values(roomData.players);
 
-    const totalGoals =
-        myGoals + oppGoals;
+    const judgeIndex =
+        roomData.judgeIndex || 0;
 
-    let goals = [];
+    const judge =
+        players[judgeIndex % players.length];
 
-    for(let i=0;i<myGoals;i++){
+    const accused =
+        players[(judgeIndex+1) % players.length];
 
-        const pool =
-            myTeam.length
-                ? myTeam
-                : PLAYERS;
+    const prosecutor =
+        players[(judgeIndex+2) % players.length];
 
-        goals.push({
-            side:"me",
-            player:randomFrom(pool)
-        });
-
-    }
-
-    for(let i=0;i<oppGoals;i++){
-
-        const pool =
-            opponentTeam.length
-                ? opponentTeam
-                : PLAYERS;
-
-        goals.push({
-            side:"opp",
-            player:randomFrom(pool)
-        });
-
-    }
-
-    goals =
-        shuffle(goals);
-
-    let scoreMy = 0;
-    let scoreOpp = 0;
-
-    goals.forEach(
-        (goal,index)=>{
-
-            setTimeout(
-                ()=>{
-
-                    if(
-                        goal.side==="me"
-                    )
-                        scoreMy++;
-                    else
-                        scoreOpp++;
-
-                    document
-                    .getElementById("simScore")
-                    .innerText =
-                        `${scoreMy} - ${scoreOpp}`;
-
-                    const event =
-                        document.createElement("div");
-
-                    event.className =
-                        "event";
-
-                    event.innerText =
-                        goal.side==="me"
-                        ? `⚽ ${goal.player.name} سجل لفريقك!`
-                        : `⚽ ${goal.player.name} سجل للخصم!`;
-
-                    events.appendChild(event);
-
-                },
-                1000 + index*1200
-            );
-
-        }
-    );
-
-    setTimeout(
-        ()=>{
-
-            let result;
-
-            if(
-                myGoals > oppGoals
-            ){
-
-                result =
-                    "🏆 فزت بالمباراة!";
-
-            }else if(
-                myGoals < oppGoals
-            ){
-
-                result =
-                    "😔 الخصم فاز بالمباراة";
-
-            }else{
-
-                result =
-                    "🤝 المباراة انتهت بالتعادل";
-
-            }
-
-            document
-            .getElementById("winnerText")
-            .innerText =
-                result;
-
-            document
-            .getElementById("backHomeBtn")
-            .style.display =
-                "block";
-
-        },
-        1000 + totalGoals*1200 + 1000
-    );
+    return {
+        players,
+        judge,
+        accused,
+        prosecutor
+    };
 
 }
 
 
-/* =========================================================
-   AUTO CLEAN TIMER
-========================================================= */
+/* ================= GAME ================= */
 
-window.addEventListener(
-    "beforeunload",
-    ()=>{
-        if(
-            roomCode &&
-            myRole
-        ){
+function renderGame(){
 
-            try{
+    if(!roomData) return;
 
-                update(
-                    ref(
-                        db,
-                        `rooms/${roomCode}/players/${myRole}`
-                    ),
-                    {
-                        online:false
-                    }
-                );
+    const roles = getRoles();
 
-            }catch(e){}
+    document.getElementById("caseNumber")
+        .textContent =
+        "القضية رقم "+roomData.round;
+
+    const c =
+        CASES[roomData.currentCase];
+
+    document.getElementById("caseTitle")
+        .textContent = c.title;
+
+    document.getElementById("accusation")
+        .textContent = c.text;
+
+    renderGamePlayers(roles);
+
+    renderRoleArea(roles);
+
+    startTimer();
+
+}
+
+
+function renderGamePlayers(roles){
+
+    const box =
+        document.getElementById("gamePlayers");
+
+    box.innerHTML = "";
+
+    roles.players.forEach(p=>{
+
+        let role = "لاعب";
+
+        if(p.id === roles.judge.id)
+            role = "👨‍⚖️ القاضي";
+
+        if(p.id === roles.accused.id)
+            role = "🚨 المتهم";
+
+        if(p.id === roles.prosecutor.id)
+            role = "📢 المدعي";
+
+        box.innerHTML += `
+
+        <div class="player">
+
+            <div class="avatar">👤</div>
+
+            <div class="player-name">
+                ${escapeHtml(p.name)}
+            </div>
+
+            <div class="role">
+                ${role}
+            </div>
+
+            <div class="score">
+                ⭐ ${p.score || 0}
+            </div>
+
+        </div>
+
+        `;
+
+    });
+
+}
+
+
+/* ================= ROLE AREA ================= */
+
+function renderRoleArea(roles){
+
+    const area =
+        document.getElementById("roleArea");
+
+    area.innerHTML = "";
+
+    if(myId === roles.accused.id){
+
+        area.innerHTML = `
+
+        <h3>🚨 أنت المتهم</h3>
+
+        <p style="margin:10px 0;color:#adb9cc">
+            اكتب دفاعك أمام المحكمة
+        </p>
+
+        <textarea
+            id="defense"
+            placeholder="اكتب دفاعك هنا..."
+        ></textarea>
+
+        <button
+            class="btn primary"
+            onclick="submitDefense()"
+        >
+            📝 تقديم الدفاع
+        </button>
+
+        `;
+
+    }
+
+    else if(myId === roles.prosecutor.id){
+
+        area.innerHTML = `
+
+        <h3>📢 أنت المدعي</h3>
+
+        <p style="margin:10px 0;color:#adb9cc">
+            اكتب حجتك ضد المتهم
+        </p>
+
+        <textarea
+            id="prosecution"
+            placeholder="اكتب حجتك هنا..."
+        ></textarea>
+
+        <button
+            class="btn red"
+            onclick="submitProsecution()"
+        >
+            📢 تقديم الاتهام
+        </button>
+
+        `;
+
+    }
+
+    else if(myId === roles.judge.id){
+
+        area.innerHTML = `
+
+        <h3>👨‍⚖️ أنت القاضي</h3>
+
+        <p style="margin:10px 0;color:#adb9cc">
+            استمع للدفاع والاتهام ثم أصدر الحكم
+        </p>
+
+        <div id="arguments"
+             style="margin:15px 0">
+        </div>
+
+        <div class="verdict-box">
+
+            <button
+                class="verdict green"
+                onclick="makeVerdict('innocent')"
+            >
+                🟢 براءة
+            </button>
+
+            <button
+                class="verdict red"
+                onclick="makeVerdict('guilty')"
+            >
+                🔴 مذنب
+            </button>
+
+        </div>
+
+        `;
+
+        loadArguments();
+
+    }
+
+    else{
+
+        area.innerHTML = `
+
+        <h3>👀 شاهد المحكمة</h3>
+
+        <p style="color:#adb9cc;margin-top:10px">
+            انتظر قرار القاضي...
+        </p>
+
+        `;
+
+    }
+
+}
+
+
+/* ================= ARGUMENTS ================= */
+
+async function submitDefense(){
+
+    const text =
+        document.getElementById("defense")
+        ?.value.trim();
+
+    if(!text){
+
+        alert("اكتب دفاعك");
+
+        return;
+    }
+
+    await set(
+        ref(
+            db,
+            "rooms/"+roomId+
+            "/arguments/defense"
+        ),
+        {
+            player:myName,
+            text:text
+        }
+    );
+
+    alert("تم تقديم الدفاع ⚖️");
+
+}
+
+
+window.submitDefense = submitDefense;
+
+
+async function submitProsecution(){
+
+    const text =
+        document.getElementById("prosecution")
+        ?.value.trim();
+
+    if(!text){
+
+        alert("اكتب الاتهام");
+
+        return;
+    }
+
+    await set(
+        ref(
+            db,
+            "rooms/"+roomId+
+            "/arguments/prosecution"
+        ),
+        {
+            player:myName,
+            text:text
+        }
+    );
+
+    alert("تم تقديم الاتهام 📢");
+
+}
+
+
+window.submitProsecution = submitProsecution;
+
+
+/* ================= LOAD ARGUMENTS ================= */
+
+async function loadArguments(){
+
+    const snap =
+        await get(
+            ref(
+                db,
+                "rooms/"+roomId+"/arguments"
+            )
+        );
+
+    const box =
+        document.getElementById("arguments");
+
+    if(!box) return;
+
+    if(!snap.exists()){
+
+        box.innerHTML =
+            "<p style='color:#8d99ad'>لم يقدم أحد حجته بعد...</p>";
+
+        return;
+    }
+
+    const data = snap.val();
+
+    box.innerHTML = "";
+
+    if(data.prosecution){
+
+        box.innerHTML += `
+
+        <div class="card">
+            <b>📢 الاتهام</b>
+            <p style="margin-top:10px">
+                ${escapeHtml(data.prosecution.text)}
+            </p>
+        </div>
+
+        `;
+
+    }
+
+    if(data.defense){
+
+        box.innerHTML += `
+
+        <div class="card">
+            <b>🛡️ الدفاع</b>
+            <p style="margin-top:10px">
+                ${escapeHtml(data.defense.text)}
+            </p>
+        </div>
+
+        `;
+
+    }
+
+}
+
+
+/* ================= VERDICT ================= */
+
+window.makeVerdict = async function(verdict){
+
+    if(myId !== getRoles().judge.id)
+        return;
+
+    const roles = getRoles();
+
+    let updates = {};
+
+    if(verdict === "guilty"){
+
+        updates[
+            "players/"+roles.accused.id+"/score"
+        ] =
+        (roles.players.find(
+            p=>p.id===roles.accused.id
+        ).score || 0) - 10;
+
+        updates[
+            "players/"+roles.prosecutor.id+"/score"
+        ] =
+        (roles.players.find(
+            p=>p.id===roles.prosecutor.id
+        ).score || 0) + 15;
+
+        updates[
+            "players/"+roles.judge.id+"/score"
+        ] =
+        (roles.players.find(
+            p=>p.id===roles.judge.id
+        ).score || 0) + 10;
+
+    }else{
+
+        updates[
+            "players/"+roles.accused.id+"/score"
+        ] =
+        (roles.players.find(
+            p=>p.id===roles.accused.id
+        ).score || 0) + 15;
+
+        updates[
+            "players/"+roles.judge.id+"/score"
+        ] =
+        (roles.players.find(
+            p=>p.id===roles.judge.id
+        ).score || 0) + 10;
+
+    }
+
+    updates.verdict = verdict;
+
+    updates.status = "results";
+
+    await update(roomRef,updates);
+
+};
+
+
+/* ================= RESULTS ================= */
+
+function renderResults(){
+
+    const box =
+        document.getElementById("leaderboard");
+
+    const players =
+        Object.values(roomData.players)
+        .sort(
+            (a,b)=>
+            (b.score||0)-(a.score||0)
+        );
+
+    box.innerHTML = "";
+
+    players.forEach((p,index)=>{
+
+        const medals = ["🥇","🥈","🥉"];
+
+        box.innerHTML += `
+
+        <div class="leader">
+
+            <span>
+                <span class="rank">
+                    ${medals[index] || "🏅"}
+                </span>
+                ${escapeHtml(p.name)}
+            </span>
+
+            <strong>
+                ⭐ ${p.score || 0}
+            </strong>
+
+        </div>
+
+        `;
+
+    });
+
+}
+
+
+/* ================= NEW CASE ================= */
+
+window.newCase = async function(){
+
+    if(roomData.host !== myId)
+        return;
+
+    const players =
+        Object.values(roomData.players);
+
+    const newRound =
+        (roomData.round || 0)+1;
+
+    const newJudge =
+        ((roomData.judgeIndex || 0)+1)
+        % players.length;
+
+    await update(roomRef,{
+
+        status:"playing",
+
+        round:newRound,
+
+        currentCase:
+            Math.floor(Math.random()*CASES.length),
+
+        caseStart:Date.now(),
+
+        judgeIndex:newJudge,
+
+        arguments:null,
+
+        verdict:null
+
+    });
+
+};
+
+
+/* ================= TIMER ================= */
+
+function startTimer(){
+
+    clearInterval(timerInterval);
+
+    const timer =
+        document.getElementById("timer");
+
+    function updateTimer(){
+
+        if(!roomData?.caseStart){
+
+            timer.textContent = 60;
+
+            return;
+        }
+
+        const elapsed =
+            Math.floor(
+                (Date.now()-roomData.caseStart)/1000
+            );
+
+        const remaining =
+            Math.max(0,60-elapsed);
+
+        timer.textContent =
+            remaining;
+
+        if(remaining <= 0){
+
+            clearInterval(timerInterval);
 
         }
+
     }
-);
+
+    updateTimer();
+
+    timerInterval =
+        setInterval(updateTimer,1000);
+
+}
 
 
-/* =========================================================
-   INIT
-========================================================= */
+/* ================= MODAL ================= */
 
-showScreen("home");
+window.closeModal = function(){
+
+    document.getElementById("modal")
+        .classList.add("hidden");
+
+};
 
 </script>
 
