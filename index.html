@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AC Calculator - حاسبة قدرة التكييف الذكية</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- تأثير الثلج / الهواء الخلفي -->
+    <div class="snow-background"></div>
+
+    <div class="container">
+        <!-- الهيدر -->
+        <header class="header-card">
+            <h1>❄️ AC Calculator</h1>
+            <h2>حاسبة قدرة التكييف الذكية</h2>
+            <p>احسب الحمل التبريدي التقريبي للغرفة واعرف القدرة المناسبة للتكييف.</p>
+            <div class="header-actions">
+                <button class="btn secondary" onclick="loadSampleData()">🧪 تجربة مثال</button>
+                <button class="btn secondary" onclick="openSettingsModal()">⚙️ إعدادات الحساب</button>
+                <button class="btn secondary" onclick="checkACUpdate(true)">🔄 تحديث</button>
+            </div>
+        </header>
+
+        <!-- قسم استعادة آخر حساب -->
+        <div id="saved-session-banner" class="card hidden" style="background: rgba(15, 23, 42, 0.85); border-color: var(--accent);">
+            <p>💾 يوجد حساب سابق محفوظ في الجهاز.</p>
+            <div style="display: flex; gap: 10px; margin-top: 10px;">
+                <button class="btn primary" onclick="restoreLastSession()">إعادة استخدام البيانات</button>
+                <button class="btn danger" onclick="clearLastSession()">مسح البيانات</button>
+            </div>
+        </div>
+
+        <!-- الفورم الرئيسي -->
+        <main>
+            <section class="card">
+                <h3>🏠 بيانات الغرفة والبيئة</h3>
+                
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>الطول (متر):</label>
+                        <input type="number" id="room-length" step="0.1" min="1" placeholder="مثلاً: 5">
+                    </div>
+                    <div class="form-group">
+                        <label>العرض (متر):</label>
+                        <input type="number" id="room-width" step="0.1" min="1" placeholder="مثلاً: 4">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>الارتفاع (متر):</label>
+                    <input type="number" id="room-height" step="0.1" min="2" placeholder="مثلاً: 3">
+                </div>
+
+                <div class="form-group">
+                    <label>🧭 اتجاه الواجهة الرئيسية (التوجيه):</label>
+                    <select id="room-orientation">
+                        <option value="north" selected>🧭 بحري / شمالي (أقل تعرض للحرارة)</option>
+                        <option value="south">🧭 قبلي / جنوبي (متوسط)</option>
+                        <option value="east">🌅 شرقي (تعرض لشمس الصباح)</option>
+                        <option value="west">🌇 غربي (تعرض لشمس الظهيرة الحارقة)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>👥 عدد الأشخاص:</label>
+                    <div class="stepper">
+                        <button type="button" onclick="adjustCount('persons-count', -1)">-</button>
+                        <input type="number" id="persons-count" min="0" placeholder="3">
+                        <button type="button" onclick="adjustCount('persons-count', 1)">+</button>
+                    </div>
+                </div>
+
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>🪟 عدد الشبابيك:</label>
+                        <div class="stepper">
+                            <button type="button" onclick="adjustCount('windows-count', -1)">-</button>
+                            <input type="number" id="windows-count" min="0" placeholder="1">
+                            <button type="button" onclick="adjustCount('windows-count', 1)">+</button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>حجم الشبابيك:</label>
+                        <select id="window-size">
+                            <option value="small">صغير</option>
+                            <option value="medium" selected>متوسط</option>
+                            <option value="large">كبير</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>🚪 عدد الأبواب:</label>
+                    <div class="stepper">
+                        <button type="button" onclick="adjustCount('doors-count', -1)">-</button>
+                        <input type="number" id="doors-count" min="0" placeholder="1">
+                        <button type="button" onclick="adjustCount('doors-count', 1)">+</button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>☀️ التعرض للشمس:</label>
+                    <select id="sun-exposure">
+                        <option value="low">☁️ منخفض (قليلة التعرض)</option>
+                        <option value="medium" selected>⛅ متوسط</option>
+                        <option value="high">☀️ مرتفع (معرضة بشدة)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>🏠 نوع المكان:</label>
+                    <select id="room-type">
+                        <option value="bedroom" selected>🛏️ غرفة نوم</option>
+                        <option value="living">🛋️ غرفة معيشة</option>
+                        <option value="office">💻 مكتب</option>
+                        <option value="shop">🏪 محل</option>
+                        <option value="restaurant">🍽️ مطعم</option>
+                        <option value="admin">🏢 مكتب إداري</option>
+                        <option value="class">🏫 فصل / قاعة</option>
+                    </select>
+                </div>
+
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>💡 عدد الأجهزة الكهربائية:</label>
+                        <div class="stepper">
+                            <button type="button" onclick="adjustCount('appliances-count', -1)">-</button>
+                            <input type="number" id="appliances-count" min="0" placeholder="2">
+                            <button type="button" onclick="adjustCount('appliances-count', 1)">+</button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>مستوى الحمل الكهربائي:</label>
+                        <select id="appliances-load">
+                            <option value="low">منخفض</option>
+                            <option value="medium" selected>متوسط</option>
+                            <option value="high">مرتفع</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>🧱 العزل:</label>
+                    <select id="insulation-level">
+                        <option value="good">🟢 عزل جيد</option>
+                        <option value="medium" selected>🟡 عزل متوسط</option>
+                        <option value="bad">🔴 عزل ضعيف</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>🌡️ درجة الحرارة الخارجية:</label>
+                    <select id="outdoor-temp">
+                        <option value="20">20°C</option>
+                        <option value="25">25°C</option>
+                        <option value="30" selected>30°C</option>
+                        <option value="35">35°C</option>
+                        <option value="40">40°C</option>
+                        <option value="45">45°C</option>
+                    </select>
+                </div>
+
+                <button class="btn primary w-100" style="margin-top: 20px; font-size: 1.1rem; padding: 15px;" onclick="calculateAC()">
+                    ❄️ احسب قدرة التكييف
+                </button>
+            </section>
+
+            <!-- قسم النتائج (يظهر بعد الحساب) -->
+            <section id="results-section" class="card hidden">
+                <h3>📊 نتائج الحساب</h3>
+                
+                <div class="result-box">
+                    <div class="main-metric">
+                        <span>الحمل التبريدي التقريبي</span>
+                        <h2 id="res-btu">0 BTU/h</h2>
+                    </div>
+                    <div class="sub-metrics">
+                        <div>القدرة بالتبريد: <strong id="res-kw">0 kW</strong></div>
+                        <div>طن التبريد: <strong id="res-tr">0 TR</strong></div>
+                    </div>
+                </div>
+
+                <div class="recommended-box">
+                    <h4>🧊 القدرة المقترحة للتكييف التجاري</h4>
+                    <div class="rec-grid">
+                        <div>
+                            <span>السعة المناسبة:</span>
+                            <h3 id="res-rec-btu" style="color: var(--accent);">0 BTU/h</h3>
+                        </div>
+                        <div>
+                            <span>🐎 قدرة التكييف:</span>
+                            <h3 id="res-rec-hp" style="color: var(--pink);">0 HP</h3>
+                        </div>
+                    </div>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 10px;">
+                        ⚠️ قيمة HP هي تصنيف تجاري تقريبي لقدرة جهاز التكييف، وليست تحويلًا مباشرًا بين BTU/h والقدرة الميكانيكية أو استهلاك الكهرباء.
+                    </p>
+                    <p style="font-size: 0.8rem; color: var(--accent); margin-top: 5px;">هذه قيمة تقديرية لاختيار مبدئي.</p>
+                </div>
+
+                <!-- حاسبة استهلاك الكهرباء والتكلفة -->
+                <div class="cost-box">
+                    <h4>⚡ تقدير استهلاك الكهرباء والتكلفة المالية</h4>
+                    <div class="grid-2" style="margin-top: 10px;">
+                        <div class="form-group">
+                            <label>ساعات التشغيل اليومية:</label>
+                            <input type="number" id="cost-hours" value="8" min="1" max="24" oninput="calculateCostLive()">
+                        </div>
+                        <div class="form-group">
+                            <label>سعر الكيلووات (جنية/kWh):</label>
+                            <input type="number" id="cost-rate" value="1.50" step="0.1" min="0" oninput="calculateCostLive()">
+                        </div>
+                    </div>
+                    <div class="cost-grid">
+                        <div>القدرة الكهربائية المسحوبة: <strong id="res-electric-kw" style="color: var(--accent);">0 kW</strong></div>
+                        <div>الاستهلاك الشهري: <strong id="res-kwh-month" style="color: var(--accent);">0 kWh</strong></div>
+                        <div>التكلفة الشهرية المتوقعة: <strong id="res-cost-month" style="color: #f59e0b;">0 ج.م</strong></div>
+                    </div>
+                </div>
+
+                <!-- زر كيف تم الحساب -->
+                <button class="btn secondary w-100" style="margin: 15px 0;" onclick="toggleDetails()">🔍 كيف تم الحساب؟</button>
+                
+                <div id="calculation-details" class="hidden details-box">
+                    <h4>تفاصيل تفصيلية للحساب:</h4>
+                    <ul id="details-list"></ul>
+                </div>
+
+                <!-- الرسم البياني المبسط -->
+                <div class="chart-container">
+                    <h4>📈 مساهمة العوامل في الحمل التبريدي</h4>
+                    <div id="simple-chart" class="bar-chart"></div>
+                </div>
+
+                <!-- قسم ماذا لو؟ -->
+                <div class="what-if-box">
+                    <h4>💡 ماذا لو؟ (تعديل سريع وتحديث فوري)</h4>
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label>الأشخاص:</label>
+                            <input type="number" id="wi-persons" oninput="runWhatIf()">
+                        </div>
+                        <div class="form-group">
+                            <label>الحرارة:</label>
+                            <select id="wi-temp" onchange="runWhatIf()">
+                                <option value="20">20°C</option>
+                                <option value="25">25°C</option>
+                                <option value="30">30°C</option>
+                                <option value="35">35°C</option>
+                                <option value="40">40°C</option>
+                                <option value="45">45°C</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- التحويلات -->
+                <div class="conversions-card" style="margin-top: 20px;">
+                    <h4>⚡ التحويلات القياسية</h4>
+                    <div class="conv-grid">
+                        <div>BTU/h: <span id="conv-btu">0</span></div>
+                        <div>kW Cooling: <span id="conv-kw">0</span></div>
+                        <div>TR: <span id="conv-tr">0</span></div>
+                        <div>🐎 قدرة التكييف: <span id="conv-hp" style="color: var(--pink); font-weight: bold;">0 HP</span></div>
+                    </div>
+                </div>
+
+                <!-- التنبيه الهندسي -->
+                <div class="warning-box">
+                    ⚠️ ملاحظة: هذه الحاسبة تعطي تقديرًا مبدئيًا للحمل التبريدي، وليست بديلًا عن حساب الأحمال الحرارية التفصيلي وفق ظروف المبنى والتصميم الفعلي.
+                </div>
+
+                <button class="btn primary w-100" style="margin-top: 15px;" onclick="openReportModal()">📄 إنشاء وطباعة التقرير (PDF)</button>
+            </section>
+
+            <!-- حاسبة تحويل الوحدات السريعة -->
+            <section class="card">
+                <h3>🧮 قسم تحويل الوحدات</h3>
+                <div class="form-group">
+                    <label>أدخل القيمة بـ BTU/h:</label>
+                    <input type="number" id="unit-convert-input" placeholder="مثال: 18000" oninput="convertUnitsLive()">
+                </div>
+                <div class="conv-grid" style="margin-top: 10px;">
+                    <div>kW: <span id="uc-kw">0</span></div>
+                    <div>TR: <span id="uc-tr">0</span></div>
+                    <div>HP: <span id="uc-hp">0</span></div>
+                </div>
+            </section>
+
+            <!-- القسم التعليمي -->
+            <section class="card">
+                <h3>📚 تعلم التبريد والتكييف</h3>
+                <div class="edu-grid">
+                    <div class="edu-item">
+                        <h4>ما هو BTU/h؟</h4>
+                        <p>وحدة بريطانية حرارية في الساعة، تقيس كمية الحرارة التي يتم إزالتها في الساعة الواحدة.</p>
+                    </div>
+                    <div class="edu-item">
+                        <h4>ما هو طن التبريد TR؟</h4>
+                        <p>يساوي تقريباً 12,000 BTU/h، وهي الطاقة الناتجة عن انصهار طن من الثلج في 24 ساعة.</p>
+                    </div>
+                    <div class="edu-item">
+                        <h4>Capacity vs Power</h4>
+                        <p>سعة التبريد هي طاقة إزالة الحرارة، أما استهلاك الكهرباء (Watts) فهو ما يسحبه الكومبريسور من الشبكة.</p>
+                    </div>
+                    <div class="edu-item">
+                        <h4>لماذا ليس المساحة فقط؟</h4>
+                        <p>لأن الشمس، الأجهزة، عدد الأشخاص، اتجاه الغرفة، والعزل عوامل رئيسية تؤثر بشكل ضخم على الحمل الحراري.</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- نافذة الإعدادات (Modal) -->
+    <div id="settings-modal" class="modal hidden">
+        <div class="modal-content">
+            <h3>⚙️ إعدادات الحساب وجدول HP</h3>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 15px;">يمكنك تعديل ثوابت الحساب وجدول الحصان التجاري أدناه مباشرة:</p>
+            
+            <div class="form-group">
+                <label>الحمل الأساسي لكل متر مربع (BTU/h):</label>
+                <input type="number" id="set-base-load" value="500">
+            </div>
+
+            <h4>جدول قدرات التكييف التجارية (HP):</h4>
+            <div id="settings-hp-container" style="max-height: 200px; overflow-y: auto; margin-bottom: 15px;"></div>
+
+            <div style="display: flex; gap: 10px;">
+                <button class="btn primary" onclick="saveSettings()">حفظ الإعدادات</button>
+                <button class="btn secondary" onclick="closeSettingsModal()">إغلاق</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة التقرير (Modal) -->
+    <div id="report-modal" class="modal hidden">
+        <div class="modal-content report-print-area">
+            <div class="report-header">
+                <h3>❄️ تقرير الحمل التبريدي وتكلفة التشغيل</h3>
+                <p style="font-size:0.8rem; color:#64748b;">كلية تكنولوجيا الصناعة والطاقة - AC Calculator Project</p>
+            </div>
+            <hr style="border-color: var(--border); margin: 10px 0;">
+            <div id="report-body-content"></div>
+            <div style="display: flex; gap: 10px; margin-top: 20px;" class="no-print">
+                <button class="btn primary" onclick="window.print()">🖨️ طباعة التقرير / حفظ PDF</button>
+                <button class="btn secondary" onclick="closeReportModal()">إغلاق</button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- AC Calculator Update Modal -->
+    <div id="ac-update-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="ac-update-title">
+        <div class="modal-content ac-update-card">
+            <div style="text-align:center;">
+                <div class="ac-update-icon">🚀</div>
+                <h3 id="ac-update-title" style="margin-bottom:6px;">تحديث جديد متاح</h3>
+                <p id="ac-update-version" style="color:var(--accent);font-weight:bold;"></p>
+            </div>
+            <div class="details-box" style="margin-top:15px;">
+                <strong>ما الجديد؟</strong>
+                <ul id="ac-update-notes" style="margin-top:8px;"></ul>
+            </div>
+            <p style="font-size:0.82rem;color:var(--text-muted);text-align:center;margin:12px 0;">
+                سيتم فتح رابط تحميل النسخة الجديدة. بعد اكتمال التحميل افتح ملف APK لتثبيت التحديث.
+            </p>
+            <div style="display:flex;gap:10px;">
+                <button id="ac-update-button" class="btn primary" style="flex:1;">🔄 تحديث الآن</button>
+                <button class="btn secondary" style="flex:1;" onclick="acCloseUpdateModal()">لاحقًا</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script src="updater.js"></script>
+</body>
+</html>
